@@ -1,8 +1,5 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# senTWEETment
-
 <!-- badges: start -->
 
 [![Lifecycle:
@@ -20,14 +17,14 @@ You can install the released version of senTWEETment from
 install.packages("senTWEETment")
 ```
 
-## Design Specs
+# Design Specs
 
 This app provides an easy interface to analyze twitter sentiment. Users
 can pull in tweets using hashtags, locations, or specific ID, and
 conduct text sentiment analysis using various ranking methods. The
 results should be available for download.
 
-### General Observation
+## General Observation
 
 -   Straightforward app, everything should be done on 1 page (no tab)
 
@@ -35,23 +32,23 @@ results should be available for download.
     explicitly, by graying out next steps, before the previous ones are
     complete
 
-### User experience considerations
+## User experience considerations
 
 -   Make it clear the need for API keys (Renvironment & Sys.get)
 
 -   Let’s make very clear the steps to follow
 
-### Technical points
+## Technical points
 
 -   Clear communications between steps (modules), when one is done, it
     should trigger next. If previous steps are modified, subsequent
     steps should also be modified.
 
-### Concept Map
+## Concept Map
 
-![](https://www.figma.com/file/KnIro6aWjUj5KwMHlwTb93/senTWEETment?node-id=0%3A1)
+![Figma](https://www.figma.com/file/KnIro6aWjUj5KwMHlwTb93/senTWEETment?node-id=0%3A1)
 
-### Asking Questions
+## Asking Questions
 
 Who are the end users of your app?
 
@@ -85,7 +82,7 @@ a tractor, in a plant, or while wearing lab coats?
 
 -   In the office.
 
-### Personas
+## Personas
 
 Martha Guthrie: Digital Marketing Manager at Weissnat Group
 
