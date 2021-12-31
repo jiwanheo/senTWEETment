@@ -6,16 +6,19 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-# {senTWEETment} <img src="inst/app/www/hex.png" align="right" width="120"/>
+# senTWEETment <img src="inst/app/www/hex.png" align="right" width="120"/>
 
 ## Installation
 
-You can install the released version of senTWEETment from
-[CRAN](https://CRAN.R-project.org) with:
+You can install the latest version of senTWEETment from github with:
 
 ``` r
-install.packages("senTWEETment")
+remotes::install_github("jiwanheo/senTWEETment")
 ```
+
+## Progress
+
+![Progress](inst/app/www/progress.gif)
 
 # Design Specs
 
