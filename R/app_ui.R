@@ -2,7 +2,7 @@
 #'
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
-#' @import shiny
+#' @importFrom shiny fluidPage
 #' @noRd
 app_ui <- function(request) {
   tagList(
@@ -10,7 +10,7 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     fluidPage(
-      h1("senTWEETment")
+      mod_main_ui("main_1")
     )
   )
 }
@@ -20,8 +20,9 @@ app_ui <- function(request) {
 #' This function is internally used to add external
 #' resources inside the Shiny application.
 #'
-#' @import shiny
+#' @importFrom shiny tags
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
+#' @importFrom shinyWidgets useShinydashboard
 #' @noRd
 golem_add_external_resources <- function(){
 
@@ -30,13 +31,14 @@ golem_add_external_resources <- function(){
   )
 
   tags$head(
-    favicon(),
+    favicon(ext = 'ico'),
     bundle_resources(
       path = app_sys('app/www'),
       app_title = 'senTWEETment'
-    )
+    ),
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
+    useShinydashboard()
   )
 }
 
