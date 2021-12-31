@@ -20,11 +20,11 @@
 ##
 golem::fill_desc(
   pkg_name = "senTWEETment", # The Name of the package containing the App
-  pkg_title = "PKG_TITLE", # The Title of the package containing the App
-  pkg_description = "PKG_DESC.", # The Description of the package containing the App
-  author_first_name = "AUTHOR_FIRST", # Your First Name
-  author_last_name = "AUTHOR_LAST", # Your Last Name
-  author_email = "AUTHOR@MAIL.COM", # Your Email
+  pkg_title = "Analyze Twitter Sentiment", # The Title of the package containing the App
+  pkg_description = "A Shiny app to pull in and conduct text sentiment analysis on tweets, using Twitter Developer API. Users of this app can easily customize the analysis, without coding.", # The Description of the package containing the App
+  author_first_name = "Jiwan", # Your First Name
+  author_last_name = "Heo", # Your Last Name
+  author_email = "jiwanheo123@gmail.com", # Your Email
   repo_url = NULL # The URL of the GitHub Repo (optional)
 )
 
@@ -33,7 +33,7 @@ golem::set_golem_options()
 
 ## Create Common Files ----
 ## See ?usethis for more information
-usethis::use_mit_license("Golem User") # You can set another license here
+usethis::use_mit_license("Jiwan Heo") # You can set another license here
 usethis::use_readme_rmd(open = FALSE)
 usethis::use_code_of_conduct()
 usethis::use_lifecycle_badge("Experimental")
