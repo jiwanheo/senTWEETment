@@ -29,7 +29,7 @@ remotes::install_github("jiwanheo/senTWEETment")
 
 ## Progress
 
-![Progress](inst/app/www/progress.gif)
+![Progress](progress.gif)
 
 # Design Specs
 
