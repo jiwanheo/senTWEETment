@@ -12,8 +12,11 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
 Suggests: 
+    rmarkdown,
+    knitr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Language: en-US
 URL: https://github.com/jiwanheo/senTWEETment
 BugReports: https://github.com/jiwanheo/senTWEETment/issues
+VignetteBuilder: knitr

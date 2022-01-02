@@ -20,6 +20,7 @@ golem::add_module(name = "main") # Name of the module
 golem::add_module(name = "top") # Name of the module
 golem::add_module(name = "mid") # Name of the module
 golem::add_module(name = "bot") # Name of the module
+golem::add_module(name = "creds_modal") # Name of the module
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*

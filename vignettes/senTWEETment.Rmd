@@ -1,0 +1,43 @@
+---
+title: "senTWEETment"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{senTWEETment}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+![](../inst/app/www/hex.png){width=200px, height=200px}
+
+{senTWEETment} is a shiny app that provides an easy interface to analyze twitter sentiment. Users can pull in tweets using hashtags, locations, user ID, or tweet ID, and conduct text sentiment analysis using various ranking methods. 
+
+Like other Shiny apps, `run_app()` starts the app.
+
+```{r setup, eval=FALSE}
+library(senTWEETment)
+run_app()
+```
+
+# Connecting to Twitter Dev API
+
+[Twitter Dev API](https://developer.twitter.com/en) is required to use this app. They do require you to have a Twitter account, but the setup is straightforward. Take note of your consumer keys & authentication tokens somewhere.
+
+When the app is launched, it will look for the 4 Twitter API Keys in the R environment (`mod_main`). If not found, the modalBox will open, asking for them. (`mod_creds_modal`) The modal asks the user to supply the keys. The users have the option of either saving the them in environment (so next time, it won't open), or just use the creds they provided without saving. (modalBox will open next time)
+
+## Gameplan
+
+I should have a function (`get_creds()`). It can either look up the env for the 4 cred keys, or have them be passed to it.
+
+- `get_creds()` is called every time an app is launched
+- Scenario A: user already has API keys saved in env. - Awesome, it will `Sys.get()` and return them.
+- Scenario B: user doesn't have API keys saved, but saves them in the modalBox. - Good, hitting the "Save the creds to R environment" button should trigger the `get_creds()` again, and it can `Sys.get()` and return them.
+- Scenario C: user doesn't have API keys saved, and doesn't save them in the modalBox - Not ideal. hitting the "Use the creds, but don't save them" button should trigger the `get_creds()` again, but this time, the API keys are passed, and literally just returns it. 
+
+Do I even need `get_creds()` to handle scenario C? Or just have it done inside the modalBox? Let's think about this before actually making the connection to API. (Pull Tweets button)

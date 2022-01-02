@@ -37,6 +37,8 @@ mod_main_ui <- function(id){
 #'
 #' @noRd
 #' @export
+#'
+#' @importFrom shiny showModal
 mod_main_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
@@ -45,6 +47,12 @@ mod_main_server <- function(id){
     mod_top_server("top_1")
     mod_mid_server("mid_1")
     mod_bot_server("bot_1")
+
+
+    showModal(
+      mod_creds_modal_ui(ns("creds_modal_1"))
+    )
+
   })
 }
 
