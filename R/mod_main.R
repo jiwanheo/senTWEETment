@@ -67,6 +67,9 @@ mod_main_server <- function(id){
         mod_creds_modal_ui(ns("creds_modal_1"))
       )
     }
+    else {
+      connect_to_api(creds_list = get_creds())
+    }
 
     mod_creds_modal_server("creds_modal_1", to_enable = creds)
     mod_header_server("header_1")

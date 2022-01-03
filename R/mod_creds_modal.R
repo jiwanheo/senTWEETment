@@ -69,8 +69,9 @@ mod_creds_modal_ui <- function(id){
 #' creds_modal Server Functions
 #'
 #' @noRd
-#' @importFrom shiny observeEvent
+#' @importFrom shiny observeEvent removeModal
 #' @importFrom shinyjs enable
+#' @importFrom rlang sym
 mod_creds_modal_server <- function(id, to_enable){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
@@ -80,6 +81,39 @@ mod_creds_modal_server <- function(id, to_enable){
     observeEvent( watch("missing_creds"), {
       lapply(to_enable, function(x) {enable(id = x)})
     })
+
+    # When user hits "save_cred", save the supplied inputs to user-specific
+    # .Renviron.
+    observeEvent( input$save_creds, {
+
+      renv_loc <- file.path(Sys.getenv("R_USER"), ".Renviron")
+
+      lapply(to_enable, function(x) {
+        input_expr <- bquote(input[[.(x)]])
+        renv_entry <- paste0('TWITTER_', toupper(x), ' = ', '"', eval(input_expr), '"')
+        cat(renv_entry, file = renv_loc, append = TRUE)
+      })
+
+      connect_to_api(creds_list = get_creds())
+      Sys.sleep(1)
+      removeModal()
+    })
+
+    # When user hits "save_cred", just pass it along get_creds(), and connect_to_api()
+    observeEvent( input$just_use_creds, {
+
+      creds <- get_creds(
+        api_key             = input$api_key,
+        api_key_secret      = input$api_key_secret,
+        access_token        = input$access_token,
+        access_token_secret = input$access_token_secret
+      )
+
+      connect_to_api(creds_list = creds)
+      Sys.sleep(1)
+      removeModal()
+    })
+
   })
 }
 

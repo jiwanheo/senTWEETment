@@ -11,13 +11,19 @@ get_creds(
   access_token_secret = NULL
 )
 }
+\arguments{
+\item{api_key}{A Twitter API credential}
+
+\item{api_key_secret}{A Twitter API credential}
+
+\item{access_token}{A Twitter API credential}
+
+\item{access_token_secret}{A Twitter API credential}
+}
 \description{
 Retrieve Twitter API keys either from .Renviron file, or users
 can manually pass them into this function. If all 4 credentials are found,
 this function returns a named list containing the keys. If any are missing,
 this function returns a character vector containing the names of the missing
 keys.
-}
-\details{
-twitter
 }
