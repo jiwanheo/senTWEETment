@@ -24,7 +24,7 @@ golem::add_module(name = "creds_modal") # Name of the module
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*
-golem::add_fct("helpers", with_test = TRUE)
+golem::add_fct("twitter")
 golem::add_utils("helpers", with_test = TRUE)
 
 ## External resources

@@ -41,3 +41,5 @@ I should have a function (`get_creds()`). It can either look up the env for the 
 - Scenario C: user doesn't have API keys saved, and doesn't save them in the modalBox - Not ideal. hitting the "Use the creds, but don't save them" button should trigger the `get_creds()` again, but this time, the API keys are passed, and literally just returns it. 
 
 Do I even need `get_creds()` to handle scenario C? Or just have it done inside the modalBox? Let's think about this before actually making the connection to API. (Pull Tweets button)
+
+Also, if user partially has the creds filled (1 missing), I can have `get_creds()` return that field, and call mod_creds_modal with it as an argument, and have the rest of the creds greyed out.

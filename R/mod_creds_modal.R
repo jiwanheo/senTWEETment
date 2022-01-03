@@ -8,32 +8,51 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList modalDialog HTML textInput actionButton modalButton
+#' @importFrom shinyjs disabled
 mod_creds_modal_ui <- function(id){
   ns <- NS(id)
   tagList(
     modalDialog(
-      easyClose = TRUE,
-
       tagList(
         h2("Please provide Twitter API keys!"),
-        HTML("You don't have Twitter API keys saved in your environment! <br>
-             Enter the creds, and save to environment, so you won't have to see this message again! <br>
-             Or you can continue to supply these creds every time this app opens"),
-        textInput(
-          ns("api_key"),
-          "Enter API Key:"
+        HTML("Enter the creds and save to environment, so you won't have to see this message again! <br>
+             Or you can continue to supply these creds every time this app opens. <br>
+             **If any of the below is disabled, it means it already exists in your .Renviron!"),
+
+        # API Key inputs are initially disabled.
+        # We will receive from mod_main, which inputs we need, and
+        # enable them in the server.
+        disabled(
+          textInput(
+            ns("api_key"),
+            "API Key:",
+            placeholder = "API_KEY"
+          )
         ),
-        textInput(
-          ns("api_key_secret"),
-          "Enter API Key Secret:",
+        disabled(
+          textInput(
+            ns("api_key_secret"),
+            "API Key Secret:",
+            placeholder = "API_KEY_SECRET"
+          )
         ),
-        textInput(
-          ns("access_token"),
-          "Enter Access Token:"
+        disabled(
+          textInput(
+            ns("access_token"),
+            "Access Token:",
+            placeholder = "ACCESS_TOKEN"
+          )
         ),
-        textInput(
-          ns("access_token_secret"),
-          "Enter Access Token Secret:"
+        disabled(
+          textInput(
+            ns("access_token_secret"),
+            "Access Token Secret:",
+            placeholder = "ACCESS_TOKEN_SECRET"
+          )
+        ),
+        actionButton(
+          ns("ahi"),
+          "Hi"
         )
       ),
 
@@ -45,9 +64,7 @@ mod_creds_modal_ui <- function(id){
         actionButton(
           ns("just_use_creds"),
           "Use the creds, but don't save them"
-        ),
-        modalButton("Cancel")
-
+        )
       )
     )
   )
@@ -56,9 +73,25 @@ mod_creds_modal_ui <- function(id){
 #' creds_modal Server Functions
 #'
 #' @noRd
-mod_creds_modal_server <- function(id){
+#' @importFrom shiny observeEvent
+#' @importFrom shinyjs enable
+mod_creds_modal_server <- function(id, to_enable){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
+
+    # For each API key we need to ask the user, enable the UI input.
+    lapply(to_enable, function(x) {enable(id = x)})
+
+
+    # I think I'm having trouble because server doesn't talk to UI
+    # after it has been rendered. (using observEvent to enable works.)
+    # I think the potential soltion is to watch/trigger.
+
+    observeEvent(input$ahi, {
+      enable("access_token_secret")
+    })
+
+
 
   })
 }
