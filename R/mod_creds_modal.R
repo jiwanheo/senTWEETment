@@ -14,9 +14,9 @@ mod_creds_modal_ui <- function(id){
   tagList(
     modalDialog(
       tagList(
-        h2("Please provide Twitter API keys!"),
-        HTML("Enter the creds and save to environment, so you won't have to see this message again! <br>
-             Or you can continue to supply these creds every time this app opens. <br>
+        h2("Please provide your Twitter API keys!"),
+        HTML("Enter the API keys and save to R environment (recommeneded) <br>
+             Or you can continue to supply them every time this app opens. <br>
              **If any of the below is disabled, it means it already exists in your .Renviron!"),
 
         # API Key inputs are initially disabled.
@@ -49,21 +49,17 @@ mod_creds_modal_ui <- function(id){
             "Access Token Secret:",
             placeholder = "ACCESS_TOKEN_SECRET"
           )
-        ),
-        actionButton(
-          ns("ahi"),
-          "Hi"
         )
       ),
 
       footer = tagList(
         actionButton(
           ns("save_creds"),
-          "Save the creds to R environment"
+          "Save my API keys to R environment"
         ),
         actionButton(
           ns("just_use_creds"),
-          "Use the creds, but don't save them"
+          "Use the API keys, but don't save them"
         )
       )
     )
@@ -79,20 +75,11 @@ mod_creds_modal_server <- function(id, to_enable){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    # For each API key we need to ask the user, enable the UI input.
-    lapply(to_enable, function(x) {enable(id = x)})
-
-
-    # I think I'm having trouble because server doesn't talk to UI
-    # after it has been rendered. (using observEvent to enable works.)
-    # I think the potential soltion is to watch/trigger.
-
-    observeEvent(input$ahi, {
-      enable("access_token_secret")
+    # Observe the "missing_cred" trigger, that is fired off in `mod_main()`
+    # If triggered, update the UI (enable some user inputs)
+    observeEvent( watch("missing_creds"), {
+      lapply(to_enable, function(x) {enable(id = x)})
     })
-
-
-
   })
 }
 

@@ -40,6 +40,6 @@ I should have a function (`get_creds()`). It can either look up the env for the 
 - Scenario B: user doesn't have API keys saved, but saves them in the modalBox. - Good, hitting the "Save the creds to R environment" button should trigger the `get_creds()` again, and it can `Sys.get()` and return them.
 - Scenario C: user doesn't have API keys saved, and doesn't save them in the modalBox - Not ideal. hitting the "Use the creds, but don't save them" button should trigger the `get_creds()` again, but this time, the API keys are passed, and literally just returns it. 
 
-Do I even need `get_creds()` to handle scenario C? Or just have it done inside the modalBox? Let's think about this before actually making the connection to API. (Pull Tweets button)
-
 Also, if user partially has the creds filled (1 missing), I can have `get_creds()` return that field, and call mod_creds_modal with it as an argument, and have the rest of the creds greyed out.
+- Had to use a "fake" `reactiveVal` that is listened by a init-trigger-watch. (the 4 input boxes are disabled by default, and we enable only the necessary ones - requiring server to update UI)
+- If their creds are wrong, we'll redirect them here, with all 4 boxes open?

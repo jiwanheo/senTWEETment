@@ -38,22 +38,36 @@ mod_main_ui <- function(id){
 #' @noRd
 #' @export
 #'
-#' @importFrom shiny showModal
+#' @importFrom shiny showModal reactiveVal observeEvent
 mod_main_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    # Retrieve Twitter API credentials from .Renviron,
-    # and if not found (get_creds returns a character vector of
-    # missing cred names, rather than a list of creds), then launch the modalBox
-    # if found, move on with the creds.
+    # Retrieve Twitter API credentials from .Renviron
     creds <- get_creds()
+    # Save "creds" in reactiveVal, to fire off reactive triggers, but not actually use it.
+    creds_holder <- reactiveVal()
 
+    # This event is triggered when the above reactiveVal changes (when creds are retrieved)
+    # It is listened in `mod_creds_modal`, so it can un-grey inputs.
+    init("missing_creds")
+
+    observeEvent(creds_holder, {
+      trigger("missing_creds")
+    })
+    # Update reactiveVal
+    creds_holder(creds)
+
+
+    # if creds not found (get_creds returns a character vector of
+    # missing cred names, rather than a named list of creds), then launch modalBox
+    # if found, everything's good.
     if(!is.list(creds)) {
       showModal(
         mod_creds_modal_ui(ns("creds_modal_1"))
       )
     }
+
     mod_creds_modal_server("creds_modal_1", to_enable = creds)
     mod_header_server("header_1")
     mod_top_server("top_1")
