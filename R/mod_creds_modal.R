@@ -24,6 +24,13 @@ mod_creds_modal_ui <- function(id){
         # enable them in the server.
         disabled(
           textInput(
+            ns("app"),
+            "App Name:",
+            placeholder = "APP_NAME"
+          )
+        ),
+        disabled(
+          textInput(
             ns("api_key"),
             "API Key:",
             placeholder = "API_KEY"
@@ -71,7 +78,7 @@ mod_creds_modal_ui <- function(id){
 #' @noRd
 #' @importFrom shiny observeEvent removeModal
 #' @importFrom shinyjs enable
-#' @importFrom rlang sym
+#' @importFrom shinyalert shinyalert
 mod_creds_modal_server <- function(id, to_enable){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
@@ -94,24 +101,34 @@ mod_creds_modal_server <- function(id, to_enable){
         cat(renv_entry, file = renv_loc, append = TRUE)
       })
 
-      connect_to_api(creds_list = get_creds())
-      Sys.sleep(1)
       removeModal()
+      connect_to_api(creds_list = get_creds())
+      shinyalert("Connected!", "Start analyzing tweets!", type = "success")
     })
 
     # When user hits "save_cred", just pass it along get_creds(), and connect_to_api()
     observeEvent( input$just_use_creds, {
 
+      # Helper to pass in NULL to get_creds, if input is disabled
+      input_or_null <- function(key){
+        input_expr <- eval(bquote(input[[.(key)]]))
+
+        if(input_expr == "") NULL else input_expr
+      }
+
+      # Need to pass in the disabled inputs as NULL
       creds <- get_creds(
-        api_key             = input$api_key,
-        api_key_secret      = input$api_key_secret,
-        access_token        = input$access_token,
-        access_token_secret = input$access_token_secret
+        # app = ifelse(input$app == "", NULL, input$app),
+        app                 = input_or_null("app"),
+        api_key             = input_or_null("api_key"),
+        api_key_secret      = input_or_null("api_key_secret"),
+        access_token        = input_or_null("access_token"),
+        access_token_secret = input_or_null("access_token_secret")
       )
 
-      connect_to_api(creds_list = creds)
-      Sys.sleep(1)
       removeModal()
+      connect_to_api(creds_list = creds)
+      shinyalert("Connected!", "Start analyzing tweets!", type = "success")
     })
 
   })

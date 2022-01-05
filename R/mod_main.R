@@ -43,7 +43,10 @@ mod_main_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    # Retrieve Twitter API credentials from .Renviron
+    # If Twitter Token doesn't exist, ask users for API keys
+    if(Sys.getenv("TWITTER_PAT") == "") {
+
+      # Check if any Twitter API credentials exist in .Renviron
     creds <- get_creds()
     # Save "creds" in reactiveVal, to fire off reactive triggers, but not actually use it.
     creds_holder <- reactiveVal()
@@ -70,6 +73,9 @@ mod_main_server <- function(id){
     else {
       connect_to_api(creds_list = get_creds())
     }
+
+    }
+
 
     mod_creds_modal_server("creds_modal_1", to_enable = creds)
     mod_header_server("header_1")

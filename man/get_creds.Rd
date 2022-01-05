@@ -5,6 +5,7 @@
 \title{Retrieve Twiter API keys}
 \usage{
 get_creds(
+  app = NULL,
   api_key = NULL,
   api_key_secret = NULL,
   access_token = NULL,
@@ -12,6 +13,8 @@ get_creds(
 )
 }
 \arguments{
+\item{app}{A Twitter API credential}
+
 \item{api_key}{A Twitter API credential}
 
 \item{api_key_secret}{A Twitter API credential}
