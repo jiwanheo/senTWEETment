@@ -2,12 +2,15 @@
 % Please edit documentation in R/mod_top.R
 \name{mod_top_ui}
 \alias{mod_top_ui}
-\title{mod_top_ui and mod_top_name_server}
+\alias{mod_top_server}
+\title{Top module}
 \usage{
 mod_top_ui(id)
+
+mod_top_server(id)
 }
 \arguments{
-\item{id, input, output, session}{Internal parameters for {shiny}.}
+\item{id}{The Module namespace}
 }
 \description{
 A shiny Module that contains the first step of the app,
@@ -15,7 +18,4 @@ namely the various ways to pull in tweets. Users must specifty 1 of 4 ways
 to filter tweets, and hit "Pull Tweets!" button, which will pull in tweets
 and display as a table. Once table is loaded, the users can move on to
 the second step.
-}
-\details{
-top UI Function
 }

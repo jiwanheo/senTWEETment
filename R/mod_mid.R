@@ -1,15 +1,13 @@
-#' mid UI Function
-#' @title   mod_mid_ui and mod_mid_name_server
+#' Mid module
+#'
 #' @description A shiny Module that contains the second step of the app,
 #' namely the various methods to analyze the tweets. Users can either analyze
 #' every word (unigram), or pairs of words (N-gram), using several different
 #' dictionaries. If one option is selected, the other should be NULL. Once
 #' the method has been determined, the "Analyze!" button executes the analysis.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd
-#'
+
+#' @param id The Module namespace
+#' @rdname mod_mid
 #' @importFrom shiny NS tagList actionButton radioButtons
 #' @importFrom shinydashboard box
 mod_mid_ui <- function(id){
@@ -49,8 +47,7 @@ mod_mid_ui <- function(id){
   )
 }
 
-#' mid Server Functions
-#'
+#' @rdname mod_mid
 mod_mid_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns

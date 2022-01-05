@@ -1,12 +1,10 @@
-#' creds_modal UI Function
+#' creds_modal Module
 #'
 #' @description A shiny Module containing the modalBox that asks users for
 #' Twitter Dev API credentials.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd
-#'
+
+#' @param id The Module namespace
+#' @rdname mod_creds_modal
 #' @importFrom shiny NS tagList modalDialog HTML textInput actionButton modalButton
 #' @importFrom shinyjs disabled
 mod_creds_modal_ui <- function(id){
@@ -14,10 +12,11 @@ mod_creds_modal_ui <- function(id){
   tagList(
     modalDialog(
       tagList(
-        h2("Please provide your Twitter API keys!"),
-        HTML("Enter the API keys and save to R environment (recommeneded) <br>
-             Or you can continue to supply them every time this app opens. <br>
-             **If any of the below is disabled, it means it already exists in your .Renviron!"),
+        tags$h2("This app requires a Twitter API connection!"),
+
+        HTML('Click <a href="https://cran.r-project.org/web/packages/rtweet/vignettes/auth.html">here</a> for a how-to. <br>
+             You don\'t <em>have</em> to save these to your R environment, but it is recommended. <br>
+             **If any of the below is disabled, it means it already exists in your .Renviron!'),
 
         # API Key inputs are initially disabled.
         # We will receive from mod_main, which inputs we need, and
@@ -73,9 +72,8 @@ mod_creds_modal_ui <- function(id){
   )
 }
 
-#' creds_modal Server Functions
-#'
-#' @noRd
+#' @rdname mod_creds_modal
+#' @param to_enable a character vector of missing API credentials (input id of modal).
 #' @importFrom shiny observeEvent removeModal
 #' @importFrom shinyjs enable
 #' @importFrom shinyalert shinyalert

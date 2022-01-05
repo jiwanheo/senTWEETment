@@ -6,8 +6,15 @@ Description: A Shiny app to pull in and conduct text sentiment analysis on tweet
 License: MIT + file LICENSE
 Imports: 
     config (>= 0.3.1),
+    ggplot2,
     golem (>= 0.3.1.9003),
-    shiny (>= 1.7.1)
+    rtweet,
+    shinipsum,
+    shiny (>= 1.7.1),
+    shinyalert,
+    shinydashboard,
+    shinyjs,
+    shinyWidgets
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
