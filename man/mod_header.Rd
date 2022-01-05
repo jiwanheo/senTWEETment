@@ -2,17 +2,17 @@
 % Please edit documentation in R/mod_header.R
 \name{mod_header_ui}
 \alias{mod_header_ui}
-\title{mod_header_ui and mod_header_name_server}
+\alias{mod_header_server}
+\title{Header module}
 \usage{
 mod_header_ui(id)
+
+mod_header_server(id)
 }
 \arguments{
-\item{id, input, output, session}{Internal parameters for {shiny}.}
+\item{id}{The Module namespace}
 }
 \description{
 A shiny Module, that contains the header of the app,
 namely the title and the image.
-}
-\details{
-header UI Function
 }

@@ -1,15 +1,13 @@
-#' top UI Function
-#' @title   mod_top_ui and mod_top_name_server
+#' Top module
+#'
 #' @description A shiny Module that contains the first step of the app,
 #' namely the various ways to pull in tweets. Users must specifty 1 of 4 ways
 #' to filter tweets, and hit "Pull Tweets!" button, which will pull in tweets
 #' and display as a table. Once table is loaded, the users can move on to
 #' the second step.
 #'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @export
-#'
+#' @param id The Module namespace
+#' @rdname mod_top
 #' @importFrom shiny NS tagList textInput actionButton tableOutput
 #' @importFrom shinydashboard box
 mod_top_ui <- function(id){
@@ -71,10 +69,8 @@ mod_top_ui <- function(id){
   )
 }
 
-#' top Server Functions
-#'
-#' @export
-#'
+
+#' @rdname mod_top
 #' @importFrom shiny renderTable
 #' @importFrom shinipsum random_table
 mod_top_server <- function(id){

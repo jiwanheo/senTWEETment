@@ -2,19 +2,19 @@
 % Please edit documentation in R/mod_bot.R
 \name{mod_bot_ui}
 \alias{mod_bot_ui}
-\title{mod_bot_ui and mod_bot_name_server}
+\alias{mod_bot_server}
+\title{Bottom module}
 \usage{
 mod_bot_ui(id)
+
+mod_bot_server(id)
 }
 \arguments{
-\item{id, input, output, session}{Internal parameters for {shiny}.}
+\item{id}{The Module namespace}
 }
 \description{
 A shiny Module, that contains the last step of the app, namely
 the resulting analysis, and a download button. The analysis should contain
 the information about the data & method feeding in, and of course, the
 sentiment score.
-}
-\details{
-bot UI Function
 }

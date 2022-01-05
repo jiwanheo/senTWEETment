@@ -1,12 +1,9 @@
-#' header UI Function
-#' @title   mod_header_ui and mod_header_name_server
+#' Header module
 #' @description A shiny Module, that contains the header of the app,
 #' namely the title and the image.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @export
-#'
+
+#' @rdname mod_header
+#' @param id The Module namespace
 #' @importFrom shiny NS tagList imageOutput
 mod_header_ui <- function(id){
   ns <- NS(id)
@@ -14,21 +11,20 @@ mod_header_ui <- function(id){
   tagList(
     tags$div(
       class = "text-center h1", # This is probably bad. I just want to have bottom margin without clogging up the code.
-      h1("senTWEETment"),
+      tags$h1("senTWEETment"),
       imageOutput(ns("img"), height = "auto")
     )
   )
 }
 
-#' header Server Functions
-#'
+#' @rdname mod_header
 #' @importFrom shiny renderImage
 mod_header_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
     output$img <- renderImage({
-      list(src = "inst/app/www/hex.png", width = "200px", height = "200px")
+      list(src = "inst/app/www/hex.png", height = "200px")
     }, deleteFile = FALSE)
   })
 }
