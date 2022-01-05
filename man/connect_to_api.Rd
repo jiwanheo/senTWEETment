@@ -4,10 +4,10 @@
 \alias{connect_to_api}
 \title{Connect to Twitter API}
 \usage{
-connect_to_api(creds_list)
+connect_to_api(bearer_token)
 }
 \arguments{
-\item{creds_list}{A list of Twitter API credentials}
+\item{bearer_token}{User specific bearer token}
 }
 \description{
 Connect to Twitter API using the credentials provided.
