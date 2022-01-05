@@ -20,11 +20,13 @@ golem::add_module(name = "main") # Name of the module
 golem::add_module(name = "top") # Name of the module
 golem::add_module(name = "mid") # Name of the module
 golem::add_module(name = "bot") # Name of the module
+golem::add_module(name = "creds_modal") # Name of the module
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*
-golem::add_fct("helpers", with_test = TRUE)
-golem::add_utils("helpers", with_test = TRUE)
+golem::add_fct("twitter")
+golem::add_utils("trigger")
+
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
@@ -44,7 +46,8 @@ usethis::use_test("app")
 # Documentation
 
 ## Vignette ----
-usethis::use_vignette("senTWEETment")
+usethis::use_vignette("design-spec", "Design Specification")
+usethis::use_vignette("auth", "Authentication with senTWEETment")
 devtools::build_vignettes()
 
 ## Code Coverage----

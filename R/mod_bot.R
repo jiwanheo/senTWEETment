@@ -1,12 +1,12 @@
-#' bot UI Function
-#' @title   mod_bot_ui and mod_bot_name_server
+#' Bottom module
+
 #' @description A shiny Module, that contains the last step of the app, namely
 #' the resulting analysis, and a download button. The analysis should contain
 #' the information about the data & method feeding in, and of course, the
 #' sentiment score.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
+
+#' @param id The Module namespace
+#' @rdname mod_bot
 #' @importFrom shiny NS tagList textOutput plotOutput tableOutput downloadButton
 #' @importFrom shinydashboard box
 mod_bot_ui <- function(id){
@@ -21,12 +21,12 @@ mod_bot_ui <- function(id){
       collapsed = TRUE,
 
       col_12(
-        h3("Analysis result"),
+        tags$h3("Analysis result"),
         textOutput(ns("sentiment_score")),
         plotOutput(ns("word_score"))
       ),
       col_12(
-        h3("Methodologies & input data"),
+        tags$h3("Methodologies & input data"),
         textOutput(ns("methodologies")),
         tableOutput(ns("input_data"))
       ),
@@ -38,8 +38,7 @@ mod_bot_ui <- function(id){
   )
 }
 
-#' bot Server Functions
-#'
+#' @rdname mod_bot
 #' @importFrom shiny renderText renderPlot renderTable downloadHandler
 #' @importFrom shinipsum random_ggplot random_table
 #' @import ggplot2
