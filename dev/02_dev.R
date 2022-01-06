@@ -48,6 +48,7 @@ usethis::use_test("app")
 ## Vignette ----
 usethis::use_vignette("design-spec", "Design Specification")
 usethis::use_vignette("auth", "Authentication with senTWEETment")
+usethis::use_vignette("search-tweets", "How to search Tweets")
 devtools::build_vignettes()
 
 ## Code Coverage----

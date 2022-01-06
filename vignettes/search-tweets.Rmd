@@ -1,0 +1,37 @@
+---
+title: "How to search Tweets"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{How to search Tweets}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+
+## Developer's notes
+
+Some findings after initial playing around
+
+- Individual Tweet pull seems not supported by rtweet
+- Hashtag is good!
+- User timeline is good!
+- Location seems to be good, but need google maps API 
+- Looks like (hashtag+location is possible)
+
+- Have a couple search options available to users
+  - # Tweets to pull
+  - Pull likes by user?
+  - Include RT?
+  - Type (mixed, recent, popular)
+
+- Wrap every call to search tweets in a tryCatch, so we don't crash the app. Simply reset the inputs
+
+- I MIGHT want to use R6 to store tweets, so I can pass them around, like hexmake. Or can I get away with reactiveVal? Let's do some research

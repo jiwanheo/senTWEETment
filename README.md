@@ -12,6 +12,13 @@ senTWEETment is a shiny app that helps you extract and conduct sentiment
 analysis on tweets. It is distributed as an R package using the
 [golem](https://thinkr-open.github.io/golem/) framework.
 
+You can pull tweets in 1 of 3 ways:
+
+-   Search word (\#hashtag or any other text)
+-   User name
+-   Location (requires google maps API)
+-   *Search word + Location: tbd*
+
 This tool utilizes the text sentiment analysis process introduced in the
 book [Text Mining with R](https://www.tidytextmining.com/). It currently
 supports 3 lexicons:

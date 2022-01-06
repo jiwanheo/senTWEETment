@@ -8,8 +8,9 @@
 #'
 #' @param id The Module namespace
 #' @rdname mod_top
-#' @importFrom shiny NS tagList textInput actionButton tableOutput
+#' @importFrom shiny NS fluidRow tagList textInput actionButton tableOutput numericInput radioButtons
 #' @importFrom shinydashboard box
+#' @importFrom DT DTOutput
 mod_top_ui <- function(id){
   ns <- NS(id)
 
@@ -22,48 +23,74 @@ mod_top_ui <- function(id){
       collapsible = TRUE,
       collapsed = TRUE,
 
-      # col_3 & col_9 left/right setup in the box
-      col_3(
+      # col 12 / (6 + 6) / 12 setup
+      fluidRow(
         class = "box-content box-content-left",
         col_12(
-          textInput(
-            ns("hashtag"),
-            "Hashtag:",
-            value = ""
+          tags$p("Use 1 of hashtag, location or user to look up tweets, with the exception of hashtag+location working with each other.")
+        ),
+        col_6(
+          col_12(
+            textInput(
+              ns("q"),
+              "Hashtag or text:",
+              value = ""
+            )
+          ),
+          col_12(
+            textInput(
+              ns("location"),
+              "Location:",
+              value = ""
+            )
+          ),
+          col_12(
+            textInput(
+              ns("user"),
+              "User:",
+              value = ""
+            )
+          ),
+          col_12(
+            actionButton(
+              ns("pull_tweets"),
+              "Pull Tweets!"
+            )
           )
         ),
-        col_12(
-          textInput(
-            ns("location"),
-            "Location:",
-            value = ""
-          )
-        ),
-        col_12(
-          textInput(
-            ns("user"),
-            "User:",
-            value = ""
-          )
-        ),
-        col_12(
-          textInput(
-            ns("tweet_id"),
-            "Tweet ID:",
-            value = ""
-          )
-        ),
-        col_12(
-          actionButton(
-            ns("pull_tweets"),
-            "Pull Tweets!"
+        col_6(
+          col_12(
+            numericInput(
+              ns("n_tweets"),
+              "Number of tweets: \n (not guaranteed this number, use 100+)",
+              value = 100
+            )
+          ),
+          col_12(
+            radioButtons(
+              ns("include_rts"),
+              "Include Retweets?",
+              choices = c("Yes", "No"),
+              selected = "No"
+            )
+          ),
+          col_12(
+            radioButtons(
+              ns("pull_by"),
+              "Pull By",
+              choices = c("Mixed", "Recent", "Popular"),
+              selected = "Mixed"
+            )
           )
         )
       ),
 
-      col_9(
+      fluidRow(
         class = "box-content box-content-right",
-        tableOutput(ns("table"))
+        col_12(
+          tags$h3("Tweets"),
+          DTOutput(ns("table"))
+        )
       )
     )
   )
@@ -71,15 +98,40 @@ mod_top_ui <- function(id){
 
 
 #' @rdname mod_top
-#' @importFrom shiny renderTable
-#' @importFrom shinipsum random_table
+#' @importFrom shiny renderTable observeEvent updateTextInput req
+#' @importFrom DT renderDT
+#' @importFrom shinyalert shinyalert
 mod_top_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    output$table <- renderTable({
-      random_table(10, 5)
-    }, caption = "List of Tweets to analyze")
+    observeEvent(input$pull_tweets, {
+      tweets <- tryCatch(
+        pull_tweets(q = input$q,
+                    user = input$user,
+                    location = input$location,
+                    n = input$n_tweets,
+                    type = input$pull_by,
+                    include_rts = input$include_rts
+                    ),
+        warning = function(w) {
+          print(w)
+        },
+        error = function(e) {
+          # browser()
+          shinyalert(
+            html = TRUE,
+            title = e$message,
+            type = "error"
+          )
+        }
+      )
+      output$table <- renderDT({
+        req(is.data.frame(tweets))
+        tweets[, 1:4]
+      })
+    })
+
   })
 }
 
