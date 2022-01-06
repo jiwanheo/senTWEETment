@@ -62,8 +62,8 @@ mod_top_ui <- function(id){
           col_12(
             numericInput(
               ns("n_tweets"),
-              "Number of tweets: \n (not guaranteed this number, use 100+)",
-              value = 100
+              "Number of tweets: (not guaranteed)",
+              value = 10
             )
           ),
           col_12(
@@ -78,8 +78,8 @@ mod_top_ui <- function(id){
             radioButtons(
               ns("pull_by"),
               "Pull By",
-              choices = c("Mixed", "Recent", "Popular"),
-              selected = "Mixed"
+              choices = c("Recent", "Popular", "Mixed"),
+              selected = "Recent"
             )
           )
         )
@@ -99,9 +99,39 @@ mod_top_ui <- function(id){
 
 #' @rdname mod_top
 #' @importFrom shiny renderTable observeEvent updateTextInput req
-#' @importFrom DT renderDT
+#' @importFrom DT renderDT datatable
 #' @importFrom shinyalert shinyalert
 mod_top_server <- function(id){
+
+
+
+
+
+
+  #  _______ ____  _____   ____
+  #  |__  __/ __ \|  __ \ / __ \
+  #    | | | |  | | |  | | |  | |
+  #    | | | |  | | |  | | |  | |
+  #    | | | |__| | |__| | |__| |
+  #    |_|  \____/|_____/ \____/
+
+  # Make pretty the "Tweets" table (actually make it useful)
+    # All information is extracted!!
+    # Now just have to make it pretty
+      # Round profile image
+      # DT header names
+      # Nice background colour
+      # I actually have to set a min-width to the whole thing, so the col_12s don't get shifted around.
+  # Potentially in another box?
+
+  # Potentially grey out/disable "include_rts" & "pull_by" when looking up user
+  # Spinner for waiting
+  # Fail graciously when Twitter API credential fails
+
+
+
+
+
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -113,22 +143,23 @@ mod_top_server <- function(id){
                     n = input$n_tweets,
                     type = input$pull_by,
                     include_rts = input$include_rts
-                    ),
-        warning = function(w) {
-          print(w)
-        },
+        ),
         error = function(e) {
-          # browser()
+
           shinyalert(
             html = TRUE,
             title = e$message,
-            type = "error"
+            type = "error",
+            inputId = "shinyalert_error1"
           )
         }
       )
+
       output$table <- renderDT({
         req(is.data.frame(tweets))
-        tweets[, 1:4]
+        datatable(tweets,
+                  escape = FALSE,
+                  options = list(scrollX = TRUE))
       })
     })
 
