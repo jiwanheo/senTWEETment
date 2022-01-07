@@ -26,7 +26,7 @@ connect_to_api <- function(bearer_token) {
 #' @param n Number of tweets to pull. This number is not guaranteed
 #' @param type Methods to order tweets by
 #' @param include_rts Whether or not to include retweets.
-#' @importFrom rtweet search_tweets get_timeline lookup_coords
+#' @importFrom rtweet search_tweets get_timeline
 pull_tweets <- function(q, user, location = NULL,
                         n, type, include_rts) {
   #input cleaning
@@ -50,12 +50,13 @@ pull_tweets <- function(q, user, location = NULL,
       n = n
     )
   }
-  else if (q != ""){
+  else if (location != ""){
     tweets <- search_tweets(
       q = q,
       n = n,
       type = type,
-      include_rts = include_rts
+      include_rts = include_rts,
+      geocode = lookup_coords_nominatim(location)
     )
   }
   else {
@@ -63,40 +64,54 @@ pull_tweets <- function(q, user, location = NULL,
       q = q,
       n = n,
       type = type,
-      include_rts = include_rts,
-      geocode = lookup_coords(location)
+      include_rts = include_rts
     )
   }
 
   process_tweets(tweets)
 }
 
+#' Process tweets
+#'
+#' Process tweets pulled by the user
+
 #' @param tweets A data.frame containing tweets.
 #' @importFrom dplyr transmute mutate
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
 process_tweets <- function(tweets) {
+
+  if(nrow(tweets) == 0) {
+    stop("No tweets found!")
+  }
+
+  user_name <- attr(tweets, "users")$name
+  screen_name <- attr(tweets, "users")$screen_name
+  profile_image <- attr(tweets, "users")$profile_image_url_https
+
   processed <- tweets %>%
     mutate(
-      user_name = attr(., "users")$name,
-      screen_name = attr(., "users")$screen_name,
-      profile_image = attr(., "users")$profile_image_url_https,
-      user_url = paste0("https://twitter.com/", screen_name),
-      tweet_url = paste0(user_url, "/status/", id_str),
+      user_name = user_name,
+      screen_name = screen_name,
+      profile_image = profile_image,
+      user_url = paste0("https://twitter.com/", .data$screen_name),
+      tweet_url = paste0(.data$user_url, "/status/", .data$id_str),
       created_at =
     ) %>%
     transmute(
       profile_image = sprintf('<a href="%s" target=_blank><img class="profile-table-img" src=%s></img></a>',
-                              user_url,
-                              profile_image),
-      user_name,
+                              .data$user_url,
+                              .data$profile_image),
+      screen_name = paste0("@", .data$screen_name),
 
       # format date-time
       created_at = paste(
-        as.character(strptime(gsub("\\+0000\\s", "", created_at),
+        as.character(strptime(gsub("\\+0000\\s", "", .data$created_at),
                               format = "%a %b %d %H:%M:%S %Y")),
         "UTC"),
       text = sprintf('<a href="%s">%s</a>',
-                     tweet_url,
-                     text)
+                     .data$tweet_url,
+                     .data$text)
     )
 
   names(processed) <- c("Picture", "User", "Date", "Text")

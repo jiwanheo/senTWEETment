@@ -8,9 +8,10 @@
 #'
 #' @param id The Module namespace
 #' @rdname mod_top
-#' @importFrom shiny NS fluidRow tagList textInput actionButton tableOutput numericInput radioButtons
+#' @importFrom shiny NS fluidRow tagList textInput actionButton tableOutput numericInput radioButtons tagAppendAttributes
 #' @importFrom shinydashboard box
 #' @importFrom DT DTOutput
+#' @importFrom magrittr %>%
 mod_top_ui <- function(id){
   ns <- NS(id)
 
@@ -50,12 +51,6 @@ mod_top_ui <- function(id){
               "User:",
               value = ""
             )
-          ),
-          col_12(
-            actionButton(
-              ns("pull_tweets"),
-              "Pull Tweets!"
-            )
           )
         ),
         col_6(
@@ -82,14 +77,20 @@ mod_top_ui <- function(id){
               selected = "Recent"
             )
           )
-        )
+        ),
+        col_12(
+          actionButton(
+            ns("pull_tweets"),
+            "Pull Tweets!"
+          )
+        ) %>% tagAppendAttributes(class = "text-center")
       ),
 
       fluidRow(
-        class = "box-content box-content-right",
+        class = "box-content",
         col_12(
-          tags$h3("Tweets"),
           DTOutput(ns("table"))
+
         )
       )
     )
@@ -98,44 +99,25 @@ mod_top_ui <- function(id){
 
 
 #' @rdname mod_top
-#' @importFrom shiny renderTable observeEvent updateTextInput req
+#' @importFrom shiny moduleServer renderTable observeEvent updateTextInput req
 #' @importFrom DT renderDT datatable
 #' @importFrom shinyalert shinyalert
+#' @importFrom shinyjs disable enable
+#' @importFrom waiter waiter_show spin_fading_circles waiter_hide
 mod_top_server <- function(id){
-
-
-
-
-
-
-  #  _______ ____  _____   ____
-  #  |__  __/ __ \|  __ \ / __ \
-  #    | | | |  | | |  | | |  | |
-  #    | | | |  | | |  | | |  | |
-  #    | | | |__| | |__| | |__| |
-  #    |_|  \____/|_____/ \____/
-
-  # Make pretty the "Tweets" table (actually make it useful)
-    # All information is extracted!!
-    # Now just have to make it pretty
-      # Round profile image
-      # DT header names
-      # Nice background colour
-      # I actually have to set a min-width to the whole thing, so the col_12s don't get shifted around.
-  # Potentially in another box?
-
-  # Potentially grey out/disable "include_rts" & "pull_by" when looking up user
-  # Spinner for waiting
-  # Fail graciously when Twitter API credential fails
-
-
-
-
-
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
     observeEvent(input$pull_tweets, {
+
+      waiter_show(
+        html = tagList(
+          spin_fading_circles(),
+          "Loading ..."
+        ),
+        color = "rgba(0, 0, 0, 0.5)"
+      )
+
       tweets <- tryCatch(
         pull_tweets(q = input$q,
                     user = input$user,
@@ -145,7 +127,6 @@ mod_top_server <- function(id){
                     include_rts = input$include_rts
         ),
         error = function(e) {
-
           shinyalert(
             html = TRUE,
             title = e$message,
@@ -158,9 +139,23 @@ mod_top_server <- function(id){
       output$table <- renderDT({
         req(is.data.frame(tweets))
         datatable(tweets,
+                  class = "hover row-border",
                   escape = FALSE,
-                  options = list(scrollX = TRUE))
+                  options = list(scrollX = TRUE,
+                                 pageLength = 5))
       })
+
+      waiter_hide()
+    })
+
+    observeEvent(input$user, {
+      if(input$user != "") {
+        disable("include_rts")
+        disable("pull_by")
+      } else {
+        enable("include_rts")
+        enable("pull_by")
+      }
     })
 
   })

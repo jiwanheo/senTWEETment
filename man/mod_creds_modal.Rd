@@ -6,6 +6,9 @@
 \usage{
 mod_creds_modal_server(id)
 }
+\arguments{
+\item{id}{Module Id.}
+}
 \description{
 A shiny Module containing a popup box that asks users for
 Twitter Dev API bearer token. Once user inputs the token, it authenticates,
