@@ -1,0 +1,150 @@
+---
+title: "Conducting sentiment analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Conducting sentiment analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Let's just do all 3 lexicons, and present all the different outputs
+
+- Overall Sentiment per tweet & dataset (3 lex)
+- Word breakdown from the whole dataset (sentiment score bar chart)
+
+With the features of:
+
+- Custom stop words
+- N-gram adjustment
+  - Custom Negation words
+
+Note: 
+
+lexicon libraries don't need to be called every time analyzing. `get_sentiments("bing")` Maybe load this once (at page load? at first click of analyze?) and save it somewhere, so I can see if it exists.
+
+## Example
+
+### Setup
+```{r}
+# library(dplyr)
+library(magrittr)
+# library(tidytext)
+# library(tidyr)
+
+afinn <- tidytext::get_sentiments("afinn")
+
+bing <- tidytext::get_sentiments("bing") %>% 
+  dplyr::transmute(word,
+                   value = ifelse(sentiment == "positive", 1, -1))
+
+nrc <- tidytext::get_sentiments("nrc") %>% 
+  dplyr::filter(sentiment %in% c("negative", "positive")) %>% 
+  dplyr::transmute(word, 
+                   value = ifelse(sentiment == "positive", 1, -1))
+
+rtweet::auth_as("my-twitter-app")
+tweets <- rtweet::search_tweets(q = "@fordnation") %>% 
+  dplyr::select(id_str, text) %>% 
+  tibble::as_tibble()
+
+# CUSTOM STOP WORDS
+
+custom_stop_words <- dplyr::bind_rows(tibble::tibble(word = c("miss"),  
+                                      lexicon = c("custom")), 
+                               tidytext::stop_words)
+
+sentimented <- tweets %>% 
+  tidytext::unnest_tokens(word, text, token = "tweets") %>% 
+  dplyr::filter(!word %in% custom_stop_words$word,
+                !word %in% gsub("'", "", custom_stop_words$word),
+                !grepl("^\\@|http", word),
+                grepl("[a-z]", word)) %>% 
+  dplyr::inner_join(nrc, by = "word")
+```
+
+### Unigram outputs
+
+```{r}
+sentimented_sum <- sentimented %>% 
+  dplyr::group_by(id_str) %>% 
+  dplyr::summarize(value = sum(value), .groups = "drop")
+
+# Sentiment per tweet
+tweets %>% 
+  dplyr::left_join(sentimented_sum, by = "id_str") %>% 
+  dplyr::mutate(value = ifelse(is.na(value), 0, value)) %>% 
+  dplyr::arrange(value) %>% 
+  head()
+
+# Sentiment per tweet
+tweets %>% 
+  dplyr::left_join(sentimented_sum, by = "id_str") %>% 
+  dplyr::mutate(value = ifelse(is.na(value), 0, value)) %>% 
+  dplyr::summarize(value = sum(value))
+
+# word breakdown
+sentimented %>% 
+  dplyr::group_by(word) %>% 
+  dplyr::summarize(value = sum(value)) %>% 
+  dplyr::slice_max(abs(value), n = 20) %>% 
+  dplyr::mutate(word = forcats::fct_reorder(word, value)) %>% 
+  dplyr::mutate(is_positive = value > 0) %>% 
+  ggplot2::ggplot(ggplot2::aes(value, word, fill = is_positive)) +
+  ggplot2::geom_col()
+```
+
+### Bigram adjustment
+
+- "I am not happy" will give positive 3 score.
+
+How do I reverse this? break down the bigram score, create two rows (1 with original, 1 with negated). Both have `original score * -1` score. rbind this to original score.
+
+```{r}
+my_unigram <- tweets %>% 
+  tidytext::unnest_tokens(word, text, token = "tweets")
+
+unigram_score <- my_unigram %>% 
+  dplyr::inner_join(afinn, by = "word")
+
+unigram_score %>% 
+  dplyr::summarise(sum(value))
+
+my_bigram <- tweets %>%
+  tidytext::unnest_tokens(bigram, text, token = "ngrams", n = 2)
+
+bigrams_separated <- my_bigram %>%
+  tidyr::separate(bigram, c("word1", "word2"), sep = " ")
+```
+
+### Custom negation words
+
+```{r}
+negation_words <- c("not", "no", "never", "without", "didn't", "didnt", "dont", "don't", "doesn't", "doesnt")
+
+negated_words <- bigrams_separated %>%
+  dplyr::filter(word1 %in% negation_words) %>%
+  dplyr::inner_join(afinn, by = c(word2 = "word")) %>% 
+  dplyr::mutate(word1 = paste(word1, word2)) %>% 
+  purrr::pmap_dfr(function(id_str, word1, word2, value){
+    tibble::tibble(id_str = id_str, 
+                   word = c(word1, word2), 
+                   value = c(-value, -value))
+  })
+```
+
+### Adjustment
+
+```{r}
+unigram_score %>% 
+  rbind(negated_words) %>% 
+  dplyr::group_by(word) %>% 
+  dplyr::summarize(value = sum(value), .groups = "drop")
+```
+

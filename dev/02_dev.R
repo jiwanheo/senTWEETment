@@ -50,6 +50,7 @@ usethis::use_test("app")
 usethis::use_vignette("design-spec", "Design Specification")
 usethis::use_vignette("auth", "Authentication with senTWEETment")
 usethis::use_vignette("search-tweets", "How to search Tweets")
+usethis::use_vignette("analysis", "Conducting sentiment analysis")
 devtools::build_vignettes()
 
 ## Code Coverage----
