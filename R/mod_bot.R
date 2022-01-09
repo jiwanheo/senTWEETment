@@ -39,7 +39,7 @@ mod_bot_ui <- function(id){
 }
 
 #' @rdname mod_bot
-#' @importFrom shiny renderText renderPlot renderTable downloadHandler
+#' @importFrom shiny moduleServer renderText renderPlot renderTable
 #' @importFrom shinipsum random_ggplot random_table
 #' @import ggplot2
 mod_bot_server <- function(id){

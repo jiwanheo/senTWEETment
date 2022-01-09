@@ -31,7 +31,7 @@ mod_main_ui <- function(id){
 }
 
 #' @rdname mod_main
-#' @importFrom shiny showModal reactiveVal observeEvent
+#' @importFrom shiny moduleServer
 #' @importFrom rtweet auth_as
 mod_main_server <- function(id){
   moduleServer( id, function(input, output, session){

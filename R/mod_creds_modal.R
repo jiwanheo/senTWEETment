@@ -5,9 +5,9 @@
 #' saves as .rds
 
 #' @rdname mod_creds_modal
-#' @importFrom shiny tagList HTML textInput observeEvent
+#' @param id Module Id.
+#' @importFrom shiny moduleServer tagList HTML textInput observeEvent
 #' @importFrom shinyalert shinyalert
-#' @importFrom rtweet auth_as
 mod_creds_modal_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns

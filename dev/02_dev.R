@@ -26,7 +26,8 @@ golem::add_module(name = "creds_modal") # Name of the module
 ## Creates fct_* and utils_*
 golem::add_fct("twitter")
 golem::add_utils("trigger")
-
+golem::add_utils("coords")
+golem::add_utils("pipe")
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
@@ -48,6 +49,7 @@ usethis::use_test("app")
 ## Vignette ----
 usethis::use_vignette("design-spec", "Design Specification")
 usethis::use_vignette("auth", "Authentication with senTWEETment")
+usethis::use_vignette("search-tweets", "How to search Tweets")
 devtools::build_vignettes()
 
 ## Code Coverage----

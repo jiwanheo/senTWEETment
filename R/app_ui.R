@@ -23,6 +23,8 @@ app_ui <- function(request) {
 #' @importFrom shiny tags
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
 #' @importFrom shinyWidgets useShinydashboard
+#' @importFrom shinyjs useShinyjs
+#' @importFrom waiter useWaiter
 #' @noRd
 golem_add_external_resources <- function(){
 
@@ -38,7 +40,9 @@ golem_add_external_resources <- function(){
     ),
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
-    useShinydashboard()
+    useShinydashboard(),
+    useShinyjs(),
+    useWaiter()
   )
 }
 

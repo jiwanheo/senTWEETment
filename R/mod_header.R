@@ -18,7 +18,7 @@ mod_header_ui <- function(id){
 }
 
 #' @rdname mod_header
-#' @importFrom shiny renderImage
+#' @importFrom shiny moduleServer renderImage
 mod_header_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns

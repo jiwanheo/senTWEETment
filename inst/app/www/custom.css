@@ -1,0 +1,4 @@
+/* Round profile picture in DT */
+.profile-table-img {
+  border-radius: 50%;
+}
