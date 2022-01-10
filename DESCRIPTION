@@ -12,6 +12,7 @@ Imports:
     golem (>= 0.3.1.9003),
     jsonlite,
     magrittr,
+    R6,
     rlang,
     rtweet,
     shinipsum,
@@ -20,10 +21,13 @@ Imports:
     shinydashboard,
     shinyjs,
     shinyWidgets,
+    textdata,
+    tibble,
+    tidytext,
     waiter
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.1.2.9000
 Suggests: 
     rmarkdown,
     knitr,
@@ -33,3 +37,5 @@ Language: en-US
 URL: https://github.com/jiwanheo/senTWEETment
 BugReports: https://github.com/jiwanheo/senTWEETment/issues
 VignetteBuilder: knitr
+Depends: 
+    R (>= 2.10)

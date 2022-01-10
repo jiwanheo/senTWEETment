@@ -7,15 +7,20 @@
 \usage{
 mod_mid_ui(id)
 
-mod_mid_server(id)
+mod_mid_server(id, ta)
 }
 \arguments{
 \item{id}{The Module namespace}
+
+\item{ta}{TweetAnalysis object, to hold analysis process in R6.}
 }
 \description{
 A shiny Module that contains the second step of the app,
-namely the various methods to analyze the tweets. Users can either analyze
-every word (unigram), or pairs of words (N-gram), using several different
-dictionaries. If one option is selected, the other should be NULL. Once
-the method has been determined, the "Analyze!" button executes the analysis.
+namely the 2 customizable aspects of the sentiment analysis. Firstly,
+Negation adjustment carries out the bi-gram adjustment to the original
+uni-gram analysis. Users can provide their own negation words. Secondly,
+users can specify their own filler words - words that are irrelevant to the
+sentiment of a sentence ('the', 'of'). For both these options, users can
+check if a word they'd like to submit already exists in the analysis by
+clicking "see list" button.
 }

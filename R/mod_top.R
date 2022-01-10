@@ -90,7 +90,6 @@ mod_top_ui <- function(id){
         class = "box-content",
         col_12(
           DTOutput(ns("table"))
-
         )
       )
     )
@@ -99,12 +98,13 @@ mod_top_ui <- function(id){
 
 
 #' @rdname mod_top
+#' @param ta TweetAnalysis object, to hold analysis process in R6.
 #' @importFrom shiny moduleServer renderTable observeEvent updateTextInput req
 #' @importFrom DT renderDT datatable
 #' @importFrom shinyalert shinyalert
 #' @importFrom shinyjs disable enable
 #' @importFrom waiter waiter_show spin_fading_circles waiter_hide
-mod_top_server <- function(id){
+mod_top_server <- function(id, ta){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -128,7 +128,6 @@ mod_top_server <- function(id){
         ),
         error = function(e) {
           shinyalert(
-            html = TRUE,
             title = e$message,
             type = "error",
             inputId = "shinyalert_error1"
@@ -136,9 +135,11 @@ mod_top_server <- function(id){
         }
       )
 
+      ta$data <- tweets
+
       output$table <- renderDT({
-        req(is.data.frame(tweets))
-        datatable(tweets,
+        req(is.data.frame(ta$data))
+        datatable(ta$data,
                   class = "hover row-border",
                   escape = FALSE,
                   options = list(scrollX = TRUE,
@@ -146,6 +147,7 @@ mod_top_server <- function(id){
       })
 
       waiter_hide()
+      trigger("pull-tweets")
     })
 
     observeEvent(input$user, {

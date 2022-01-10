@@ -37,6 +37,10 @@ mod_main_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
+    ta <- TweetAnalysis$new()
+    init("pull-tweets")
+
+
     # Try to authenticate with rds. If fails, launch ask user for token.
     tryCatch({
       auth_as("my-twitter-app")
@@ -46,8 +50,8 @@ mod_main_server <- function(id){
 
 
     mod_header_server("header_1")
-    mod_top_server("top_1")
-    mod_mid_server("mid_1")
+    mod_top_server("top_1", ta)
+    mod_mid_server("mid_1", ta)
     mod_bot_server("bot_1")
 
   })

@@ -7,10 +7,12 @@
 \usage{
 mod_top_ui(id)
 
-mod_top_server(id)
+mod_top_server(id, ta)
 }
 \arguments{
 \item{id}{The Module namespace}
+
+\item{ta}{TweetAnalysis object, to hold analysis process in R6.}
 }
 \description{
 A shiny Module that contains the first step of the app,
