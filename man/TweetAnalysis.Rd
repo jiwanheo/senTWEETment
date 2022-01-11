@@ -39,6 +39,7 @@ Dataset from tidytext.}
 \item \href{#method-remove_negation_word}{\code{TweetAnalysis$remove_negation_word()}}
 \item \href{#method-add_filler_word}{\code{TweetAnalysis$add_filler_word()}}
 \item \href{#method-remove_filler_word}{\code{TweetAnalysis$remove_filler_word()}}
+\item \href{#method-new}{\code{TweetAnalysis$new()}}
 \item \href{#method-clone}{\code{TweetAnalysis$clone()}}
 }
 }
@@ -110,6 +111,25 @@ doesn't exists.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{filler_word}}{Filler word}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Pass in the stop_words internal data.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$new(stop_words)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{stop_words}}{stop_words internal data that is available in
+R/sysdata.rda. I don't know why I need to initialize this, and
+simply doing filler_words = stop_words don't work?}
 }
 \if{html}{\out{</div>}}
 }

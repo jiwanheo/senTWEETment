@@ -4,8 +4,8 @@
 #'
 #' @importFrom R6 R6Class
 #' @importFrom tibble tibble
-#' @importFrom magrittf %>%
-#' @importFrom dplyr filer
+#' @importFrom magrittr %>%
+#' @importFrom dplyr filter
 #' @importFrom rlang .data
 #'
 #' @section Public fields:
@@ -14,6 +14,7 @@
 TweetAnalysis <- R6Class(
   "TweetAnalysis",
   public = list(
+
     #' @field data Pulled tweets. This is subject to change, every time a set
     #' of tweets are pulled.
     data = NULL,
@@ -74,7 +75,7 @@ TweetAnalysis <- R6Class(
 
     #' @field filler_words  Stop words that are irrelevant from analysis.
     #' Dataset from tidytext.
-    filler_words = stop_words,
+    filler_words = NULL,
 
     #' @description
     #' Add word from filler_words (lower case). Throw a warning if the word
@@ -113,6 +114,19 @@ TweetAnalysis <- R6Class(
       }
 
       invisible(self)
+    },
+
+    #' @description
+    #' Pass in the stop_words internal data.
+    #'
+    #' @param stop_words stop_words internal data that is available in
+    #' R/sysdata.rda. I don't know why I need to initialize this, and
+    #' simply doing filler_words = stop_words don't work?
+    #'
+    initialize = function(stop_words) {
+      stopifnot(is.data.frame(stop_words))
+
+      self$filler_words <- stop_words
     }
   )
 )
