@@ -8,10 +8,12 @@ Imports:
     config (>= 0.3.1),
     dplyr,
     DT,
+    forcats,
     ggplot2,
     golem (>= 0.3.1.9003),
     jsonlite,
     magrittr,
+    purrr,
     R6,
     rlang,
     rtweet,
@@ -21,8 +23,10 @@ Imports:
     shinydashboard,
     shinyjs,
     shinyWidgets,
+    stringr,
     textdata,
     tibble,
+    tidyr,
     tidytext,
     waiter
 Encoding: UTF-8

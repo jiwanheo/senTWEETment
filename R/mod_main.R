@@ -37,7 +37,10 @@ mod_main_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    ta <- TweetAnalysis$new(stop_words = stop_words)
+    lexicons <- process_lexicons()
+
+    ta <- TweetAnalysis$new(filler_words = stop_words,
+                            lexicons = lexicons)
     init("pull-tweets")
 
 

@@ -7,10 +7,10 @@
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter
 #' @importFrom rlang .data
+#' @importFrom shinyalert shinyalert
 #'
 #' @section Public fields:
-#' * `data`:
-#' * `data_print`: print the data
+#' * `data`: Tweets in tibble.
 TweetAnalysis <- R6Class(
   "TweetAnalysis",
   public = list(
@@ -18,6 +18,11 @@ TweetAnalysis <- R6Class(
     #' @field data Pulled tweets. This is subject to change, every time a set
     #' of tweets are pulled.
     data = NULL,
+
+
+    #' @field lexicons A list of tibbles containing lexicons. It is NULL by
+    #' default, but is given the list at initialization
+    lexicons = NULL,
 
     # Negation words------------------------------------------------------------
 
@@ -116,17 +121,58 @@ TweetAnalysis <- R6Class(
       invisible(self)
     },
 
+    # Conduct analysis----------------------------------------------------------
+
+    #' @description
+    #' Conduct sentiment analysis on self$data, using self$lexicons,
+    #' self$filler_words and self$negation_words.
+    analyze = function() {
+      if(is.null(self$data)) {
+
+        shinyalert(
+          title = "No tweets pulled yet!",
+          type = "error",
+          inputId = "r6_analyze_error"
+        )
+
+        invisible(self)
+      }
+      else {
+        analysis_outputs <- tokenize_tweets(
+          tweets = self$data,
+          lexicons = self$lexicons,
+          filler_words = self$filler_words,
+          negation_words = self$negation_words,
+          adjust_negation = self$adjust_negation
+        )
+
+        return(analysis_outputs)
+
+        # or I can take the list of outputs, and plug them into a R6 field!
+      }
+    },
+
+    #' @field analysis_result A list of two tibbles and a ggplot plot, that
+    #' contain the result of text analysis, performed by self$analyze()
+    analysis_result = NULL,
+
+    # Initialize ---------------------------------------------------------------
+
     #' @description
     #' Pass in the stop_words internal data.
     #'
-    #' @param stop_words stop_words internal data that is available in
+    #' @param filler_words stop_words internal data that is available in
     #' R/sysdata.rda. I don't know why I need to initialize this, and
     #' simply doing filler_words = stop_words don't work?
     #'
-    initialize = function(stop_words) {
-      stopifnot(is.data.frame(stop_words))
+    #' @param lexicons A list of tibbles containing lexicons.
+    #'
+    initialize = function(filler_words, lexicons) {
+      stopifnot(is.data.frame(filler_words))
+      stopifnot(is.list(lexicons) & all(unlist(lapply(lexicons, is.data.frame))))
 
-      self$filler_words <- stop_words
+      self$filler_words <- filler_words
+      self$lexicons <- lexicons
     }
   )
 )

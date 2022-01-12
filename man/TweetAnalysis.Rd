@@ -13,8 +13,7 @@ R6 object to encapsulate the reading/cleaning/export of tweets
 }
 \section{Public fields}{
 
-* `data`:
-* `data_print`: print the data
+* `data`: Tweets in tibble.
 }
 
 \section{Public fields}{
@@ -23,12 +22,18 @@ R6 object to encapsulate the reading/cleaning/export of tweets
 \item{\code{data}}{Pulled tweets. This is subject to change, every time a set
 of tweets are pulled.}
 
+\item{\code{lexicons}}{A list of tibbles containing lexicons. It is NULL by
+default, but is given the list at initialization}
+
 \item{\code{adjust_negation}}{If "yes", do adjust bi-gram adjustment.}
 
 \item{\code{negation_words}}{Negation words used for bi-gram adjustments.}
 
 \item{\code{filler_words}}{Stop words that are irrelevant from analysis.
 Dataset from tidytext.}
+
+\item{\code{analysis_result}}{A list of two tibbles and a ggplot plot, that
+contain the result of text analysis, performed by self$analyze()}
 }
 \if{html}{\out{</div>}}
 }
@@ -39,6 +44,7 @@ Dataset from tidytext.}
 \item \href{#method-remove_negation_word}{\code{TweetAnalysis$remove_negation_word()}}
 \item \href{#method-add_filler_word}{\code{TweetAnalysis$add_filler_word()}}
 \item \href{#method-remove_filler_word}{\code{TweetAnalysis$remove_filler_word()}}
+\item \href{#method-analyze}{\code{TweetAnalysis$analyze()}}
 \item \href{#method-new}{\code{TweetAnalysis$new()}}
 \item \href{#method-clone}{\code{TweetAnalysis$clone()}}
 }
@@ -116,20 +122,33 @@ doesn't exists.
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-analyze"></a>}}
+\if{latex}{\out{\hypertarget{method-analyze}{}}}
+\subsection{Method \code{analyze()}}{
+Conduct sentiment analysis on self$data, using self$lexicons,
+self$filler_words and self$negation_words.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$analyze()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 Pass in the stop_words internal data.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$new(stop_words)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$new(filler_words, lexicons)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{stop_words}}{stop_words internal data that is available in
+\item{\code{filler_words}}{stop_words internal data that is available in
 R/sysdata.rda. I don't know why I need to initialize this, and
 simply doing filler_words = stop_words don't work?}
+
+\item{\code{lexicons}}{A list of tibbles containing lexicons.}
 }
 \if{html}{\out{</div>}}
 }

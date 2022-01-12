@@ -121,7 +121,7 @@ mod_mid_server <- function(id, ta){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    lexicons <- process_lexicons()
+
 
 
     # produce_analysis_df(tweets, lexicons)
@@ -283,6 +283,19 @@ mod_mid_server <- function(id, ta){
         )
       )
     })
+
+    # Analyze-------------------------------------------------------------------
+
+    observeEvent(input$analyze, {
+      # Do the analysis, with the R6 method, and assign it to a field in R6
+      ta$analysis_result <- ta$analyze()
+
+      # Should probably trigger something here, so the next step can respond.
+
+    })
+
+
+
   })
 }
 
