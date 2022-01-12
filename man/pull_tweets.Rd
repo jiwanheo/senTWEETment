@@ -4,7 +4,14 @@
 \alias{pull_tweets}
 \title{Pull tweets}
 \usage{
-pull_tweets(q, user, location = NULL, n, type, include_rts)
+pull_tweets(
+  q = "",
+  user = "",
+  location = "",
+  n = 10,
+  type = "Recent",
+  include_rts = TRUE
+)
 }
 \arguments{
 \item{q}{Search text, or hashtag.}

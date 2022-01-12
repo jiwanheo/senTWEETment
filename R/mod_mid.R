@@ -127,55 +127,29 @@ mod_mid_server <- function(id, ta){
     # produce_analysis_df(tweets, lexicons)
 
 
-    # Negation Words----------------------------------------------------------------
+    # Negation Words------------------------------------------------------------
 
     observeEvent(input$add_negation_word, {
       if(input$negation_word != "") {
 
-        tryCatch({
-          ta$add_negation_word(input$negation_word)
-          shinyalert(
-            title = "Negation word added!",
-            type = "success",
-            inputId = "shinyalert_add_negation_word1"
-          )
-        },
-        warning = function(w) {
-          shinyalert(
-            title = w$message,
-            type = "error",
-            inputId = "shinyalert_add_negation_word1"
-          )
-        },
-        finally = {
-          updateTextInput(inputId = "negation_word",
-                          value = "")
-        })
+        tryCatch_alert(
+          ta$add_negation_word(input$negation_word),
+          input_id = "negation_word",
+          type = "add"
+        )
+
       }
     })
 
     observeEvent(input$remove_negation_word, {
       if(input$negation_word != "") {
 
-        tryCatch({
-          ta$remove_negation_word(input$negation_word)
-          shinyalert(
-            title = "Negation word removed!",
-            type = "success",
-            inputId = "shinyalert_remove_negation_word1"
-          )
-        },
-        warning = function(w) {
-          shinyalert(
-            title = w$message,
-            type = "error",
-            inputId = "shinyalert_remove_negation_word1"
-          )
-        },
-        finally = {
-          updateTextInput(inputId = "negation_word",
-                          value = "")
-        })
+        tryCatch_alert(
+          ta$remove_negation_word(input$negation_word),
+          input_id = "negation_word",
+          type = "remove"
+        )
+
       }
     })
 
@@ -213,56 +187,29 @@ mod_mid_server <- function(id, ta){
       }
     })
 
-    # Filler Words--------------------------------------------------------------------
+    # Filler Words--------------------------------------------------------------
 
     observeEvent(input$add_filler_word, {
-
       if(input$filler_word != "") {
 
-        tryCatch({
-          ta$add_filler_word(input$filler_word)
-          shinyalert(
-            title = "Filler word added!",
-            type = "success",
-            inputId = "shinyalert_add_filler_word1"
-          )
-        },
-        warning = function(w) {
-          shinyalert(
-            title = w$message,
-            type = "error",
-            inputId = "shinyalert_add_filler_word1"
-          )
-        },
-        finally = {
-          updateTextInput(inputId = "filler_word",
-                          value = "")
-        })
+        tryCatch_alert(
+          ta$add_filler_word(input$filler_word),
+          input_id = "filler_word",
+          type = "add"
+        )
+
       }
     })
 
     observeEvent(input$remove_filler_word, {
       if(input$filler_word != "") {
 
-        tryCatch({
-          ta$remove_filler_word(input$filler_word)
-          shinyalert(
-            title = "Filler word removed!",
-            type = "success",
-            inputId = "shinyalert_remove_filler_word1"
-          )
-        },
-        warning = function(w) {
-          shinyalert(
-            title = w$message,
-            type = "error",
-            inputId = "shinyalert_remove_filler_word1"
-          )
-        },
-        finally = {
-          updateTextInput(inputId = "filler_word",
-                          value = "")
-        })
+        tryCatch_alert(
+          ta$remove_filler_word(input$filler_word),
+          input_id = "filler_word",
+          type = "remove"
+        )
+
       }
     })
 

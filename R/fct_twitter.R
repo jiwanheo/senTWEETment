@@ -27,8 +27,8 @@ connect_to_api <- function(bearer_token) {
 #' @param type Methods to order tweets by
 #' @param include_rts Whether or not to include retweets.
 #' @importFrom rtweet search_tweets get_timeline
-pull_tweets <- function(q, user, location = NULL,
-                        n, type, include_rts) {
+pull_tweets <- function(q = "", user = "", location = "",
+                        n = 10, type = "Recent", include_rts = TRUE) {
   #input cleaning
   type <- tolower(type)
   include_rts <- ifelse(include_rts == "Yes", TRUE, FALSE)

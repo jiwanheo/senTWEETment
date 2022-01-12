@@ -24,7 +24,6 @@ mod_creds_modal_server <- function(id){
           placeholder = "BEARER_TOKEN"
         )
       ),
-      inputPlaceholder = "placeholder",
       inputId = "shinyalert_input1"
     )
 

@@ -25,10 +25,12 @@ golem::add_module(name = "creds_modal") # Name of the module
 ## Add helper functions ----
 ## Creates fct_* and utils_*
 golem::add_fct("twitter")
+golem::add_fct("analysis")
 golem::add_fct("R6")
 golem::add_utils("trigger")
 golem::add_utils("coords")
-golem::add_utils("pipe")
+golem::add_utils("tidytext")
+golem::add_utils("tryCatch_alert")
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
