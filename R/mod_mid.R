@@ -23,7 +23,7 @@ mod_mid_ui <- function(id){
       status = "primary",
       solidHeader = TRUE,
       collapsible = TRUE,
-      collapsed = FALSE,
+      collapsed = TRUE,
 
       col_12(
         tags$p(HTML("The analysis in this app follows the one-token-per-row method, suggested in <a href='https://www.tidytextmining.com/index.html'>Text Mining with R</a>.
@@ -33,13 +33,15 @@ mod_mid_ui <- function(id){
 
       box(
         width = 6,
-        title = "Negation adjustment",
+        title = "Negation adjustment (Default Yes)",
         status = "primary",
         solidHeader = TRUE,
         collapsible = TRUE,
         collapsed = TRUE,
 
-        tags$p(HTML("With no adjustment, the sentence 'I am <strong>not</strong> happy' will return positive sentiment. With adjustment, every 2 consecutive words are analyzed. If negation words come first, the sentiment flips.")),
+        tags$p(HTML("Look for bi-grams that start with a negative word. If the second word has a sentiment as a unigram, cancel it out, and add the sentiment of the bigram to the sentiment <br>
+                    For example, in a unigram analysis, the sentence 'I am <strong>not</strong> happy' returns a positive sentiment. The adjustment cancels out the positive sentiment of 'happy', and add the negative sentiment of 'not happy'. <br>
+                    Feel free to add/remove words.")),
         tags$br(),
 
         radioButtons(
@@ -78,7 +80,8 @@ mod_mid_ui <- function(id){
         collapsible = TRUE,
         collapsed = TRUE,
 
-        tags$p(HTML("Words like <strong>'the', 'of', 'to'</strong> don't hold much sentiment, and are excluded. Check if your favourite filler word is excluded, and add them.")),
+        tags$p(HTML("Words like <strong>'the', 'of', 'to'</strong> don't hold much meaning, and are excluded. (Not applied to negation adjustment) <br>
+                    Feel free to add/remove words.")),
         tags$br(),
 
         textInput(
@@ -235,7 +238,25 @@ mod_mid_server <- function(id, ta){
 
     observeEvent(input$analyze, {
       # Do the analysis, with the R6 method, and assign it to a field in R6
-      ta$analysis_result <- ta$analyze()
+      tryCatch({
+
+        ta$analysis_result <- ta$analyze()
+
+        trigger("analyze-tweets")
+
+        shinyalert(
+          title = "Analysis Complete!",
+          type = "success",
+          inputId = "r6_analyze_success"
+        )
+      },
+      error = function(e) {
+        shinyalert(
+          title = e$message,
+          type = "error",
+          inputId = "r6_analyze_error"
+        )
+      })
 
       # Should probably trigger something here, so the next step can respond.
 

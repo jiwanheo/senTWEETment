@@ -7,8 +7,9 @@
 
 #' @param id The Module namespace
 #' @rdname mod_bot
-#' @importFrom shiny NS tagList textOutput plotOutput tableOutput downloadButton
+#' @importFrom shiny NS tagList textOutput plotOutput downloadButton
 #' @importFrom shinydashboard box
+#' @importFrom DT DTOutput
 mod_bot_ui <- function(id){
   ns <- NS(id)
   tagList(
@@ -28,7 +29,7 @@ mod_bot_ui <- function(id){
       col_12(
         tags$h3("Methodologies & input data"),
         textOutput(ns("methodologies")),
-        tableOutput(ns("input_data"))
+        DTOutput(ns("input_data"))
       ),
       col_12(
         downloadButton(ns("download_analysis"), "Download Analysis (pdf)"),
@@ -39,26 +40,44 @@ mod_bot_ui <- function(id){
 }
 
 #' @rdname mod_bot
-#' @importFrom shiny moduleServer renderText renderPlot renderTable
-#' @importFrom shinipsum random_ggplot random_table
-#' @import ggplot2
-mod_bot_server <- function(id){
+#' @importFrom shiny moduleServer renderText renderPlot
+#' @importFrom DT datatable renderDT
+mod_bot_server <- function(id, ta){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
     output$sentiment_score <- renderText({
-      "The overall sentiment is +2"
+
+      watch("analyze-tweets")
+      req(!is.null(ta$analysis_result$overall_score))
+
+      score <- ta$analysis_result$overall_score
+      score <- ifelse(score < 0, paste0("-", score), paste0("+", score))
+
+      paste("The overall sentiment is", score)
     })
 
     output$word_score <- renderPlot({
-      random_ggplot(type = "col") +
-        labs(title = "Sentiment score on each Word") +
-        theme_bw()
+
+      watch("analyze-tweets")
+      req(!is.null(ta$analysis_result$word_plot))
+
+      ta$analysis_result$word_plot
+
     })
 
-    output$input_data <- renderTable({
-      random_table(10, 5)
-    }, caption = "Tweets that were analyzed")
+    output$input_data <- renderDT({
+
+      watch("analyze-tweets")
+      req(!is.null(ta$analysis_result$all_tweets_scored))
+
+      datatable(ta$analysis_result$all_tweets_scored,
+                class = "hover row-border",
+                escape = FALSE,
+                options = list(scrollX = TRUE,
+                               pageLength = 5),
+                caption = "Tweets that were analyzed")
+    })
 
     output$methodologies <- renderText({
       "500 tweets were analyzed using the 'AFINN' Unigram dictionary\n

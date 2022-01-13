@@ -145,9 +145,7 @@ mod_top_server <- function(id, ta){
                   options = list(scrollX = TRUE,
                                  pageLength = 5))
       })
-
       waiter_hide()
-      trigger("pull-tweets")
     })
 
     observeEvent(input$user, {

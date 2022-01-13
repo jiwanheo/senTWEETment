@@ -7,7 +7,7 @@
 \usage{
 mod_bot_ui(id)
 
-mod_bot_server(id)
+mod_bot_server(id, ta)
 }
 \arguments{
 \item{id}{The Module namespace}

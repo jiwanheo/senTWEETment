@@ -41,7 +41,7 @@ mod_main_server <- function(id){
 
     ta <- TweetAnalysis$new(filler_words = stop_words,
                             lexicons = lexicons)
-    init("pull-tweets")
+    init("analyze-tweets")
 
 
     # Try to authenticate with rds. If fails, launch ask user for token.
@@ -55,7 +55,7 @@ mod_main_server <- function(id){
     mod_header_server("header_1")
     mod_top_server("top_1", ta)
     mod_mid_server("mid_1", ta)
-    mod_bot_server("bot_1")
+    mod_bot_server("bot_1", ta)
 
   })
 }

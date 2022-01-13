@@ -129,11 +129,7 @@ TweetAnalysis <- R6Class(
     analyze = function() {
       if(is.null(self$data)) {
 
-        shinyalert(
-          title = "No tweets pulled yet!",
-          type = "error",
-          inputId = "r6_analyze_error"
-        )
+        stop("No tweets pulled yet!")
 
         invisible(self)
       }
