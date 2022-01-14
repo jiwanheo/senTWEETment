@@ -4,7 +4,7 @@
 \alias{bigram_adjustment}
 \title{Bigram negation adjustment}
 \usage{
-bigram_adjustment(lexicons, text_stripped, negation_words)
+bigram_adjustment(lexicons, text_stripped, negation_words, filler_words)
 }
 \arguments{
 \item{lexicons}{Lexicons to use, A named list of tibbles.}
@@ -28,5 +28,6 @@ another row with the original word. The sentiment value of both rows is the
 sentiment value of the original word multiplied by -1. Then both these rows
 are appended to the 1-word-tokenized tibble, and are summed at the word/tweet
 level, canceling out the original word's sentiment, and adding the bigram
-sentiment.
+sentiment. Since we are specifically looking only for the negative words,
+stop words will exclude negation words.
 }

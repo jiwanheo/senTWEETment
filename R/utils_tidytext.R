@@ -98,10 +98,7 @@ tokenize_tweets <- function(tweets,
 
   # token must not be a filler word
   tokenized_stopped <- tokenized  %>%
-    filter(!.data$word %in% filler_words$word,
-           !.data$word %in% gsub("'", "", filler_words$word),
-           !grepl("^\\@|http", .data$word),
-           grepl("[a-z]", .data$word))
+    filter_filler_words(filler_words)
 
   # INNER join with lexicons
   sentimented <- tokenized_stopped %>%
@@ -110,7 +107,7 @@ tokenize_tweets <- function(tweets,
   # Bi-gram adjustment ----
 
   if(adjust_negation == "yes") {
-    negated_words <- bigram_adjustment(lexicons, text_stripped, negation_words)
+    negated_words <- bigram_adjustment(lexicons, text_stripped, negation_words, filler_words)
 
     # Tally up the unigram sentiments with bigram sentiments.
     sentimented <- sentimented %>%
@@ -145,7 +142,8 @@ tokenize_tweets <- function(tweets,
 #' sentiment value of the original word multiplied by -1. Then both these rows
 #' are appended to the 1-word-tokenized tibble, and are summed at the word/tweet
 #' level, canceling out the original word's sentiment, and adding the bigram
-#' sentiment.
+#' sentiment. Since we are specifically looking only for the negative words,
+#' stop words will exclude negation words.
 #' @param lexicons Lexicons to use, A named list of tibbles.
 #' @param text_stripped Texts of tweets, processed in `produce_analysis_df`
 #' @param negation_words Negation words to use from TweetAnalysis R6 class.
@@ -153,15 +151,42 @@ tokenize_tweets <- function(tweets,
 #'
 #' @importFrom tidytext unnest_tokens
 #' @importFrom tidyr separate
+#' @importFrom tibble tibble
 #' @importFrom dplyr filter inner_join mutate
-#' @importFrom purrr pmap_dfr
+#' @importFrom purrr imap_dfr pmap_dfr
 #' @importFrom rlang .data
 
-bigram_adjustment <- function(lexicons, text_stripped, negation_words) {
+bigram_adjustment <- function(lexicons, text_stripped, negation_words, filler_words) {
 
-  bigrams <- text_stripped %>%
-    unnest_tokens(.data$bigram, .data$Text, token = "ngrams", n = 2) %>%
-    separate(.data$bigram, c("word1", "word2"), sep = " ")
+  filler_words <- filler_words %>%
+    filter(!word %in% negation_words)
+
+  # unigrams, stripped of stop words
+  unigrams <- text_stripped %>%
+    unnest_tokens(.data$word, .data$Text) %>%
+    filter_filler_words(filler_words)
+
+  # Make bigrams out of the above unigrams.
+
+  bigrams <- imap_dfr(unigrams$word, function(x, y) {
+    curr_rownum <- unigrams[[y, "row_num"]]
+
+    if(y == nrow(unigrams)) {
+      # Reached the end of unigrams df
+      NULL
+    }
+    else if(curr_rownum == unigrams[[y+1, "row_num"]]) {
+      tibble::tibble(
+        row_num = curr_rownum,
+        word = paste(unigrams[[y, "word"]], unigrams[[y+1, "word"]])
+      )
+    }
+    else {
+      # Last unigram of current sentence. Stop.
+      NULL
+    }
+
+  }) %>% separate(.data$word, c("word1", "word2"), sep = " ")
 
   negated_words <- bigrams %>%
     filter(.data$word1 %in% negation_words) %>%
@@ -199,7 +224,8 @@ produce_analysis_output <- function(dfs) {
     select(-.data$row_num)
 
   overall_score <- all_tweets_scored %>%
-    summarize(Sentiment = sum(.data$Sentiment))
+    summarize(Sentiment = sum(.data$Sentiment)) %>%
+    as.numeric()
 
   word_plot <- dfs$sentimented %>%
     group_by(.data$word) %>%
@@ -216,4 +242,20 @@ produce_analysis_output <- function(dfs) {
     overall_score = overall_score,
     word_plot = word_plot
   )
+}
+
+#' Filter stop words from unigrams
+
+#' @param tokenized_unigrams A unigram dataframe.
+#' @param filler_words A filler_words dataframe.
+#' @importFrom dplyr filter
+#' @importFrom rlang .data
+
+filter_filler_words <- function(tokenized_unigrams, filler_words) {
+
+  tokenized_unigrams  %>%
+    filter(!grepl("^\\@|^http", .data$word),
+           !.data$word %in% filler_words$word,
+           !.data$word %in% gsub("'", "", filler_words$word),
+           grepl("[a-z]", .data$word))
 }
