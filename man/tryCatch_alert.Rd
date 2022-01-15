@@ -9,7 +9,7 @@ tryCatch_alert(expr, input_id, type)
 \arguments{
 \item{expr}{Expression to try. In our case, add/remove words from R6 fields.}
 
-\item{input_id}{the input ID of the text. (negation_word or filler_word)}
+\item{input_id}{the input ID of the text. (negation_word or stop_word)}
 
 \item{type}{A string, that makes the shinyalert ID. (add or remove)}
 }

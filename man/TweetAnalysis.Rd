@@ -29,7 +29,7 @@ default, but is given the list at initialization}
 
 \item{\code{negation_words}}{Negation words used for bi-gram adjustments.}
 
-\item{\code{filler_words}}{Stop words that are irrelevant from analysis.
+\item{\code{stop_words}}{Stop words that are irrelevant from analysis.
 Dataset from tidytext.}
 
 \item{\code{analysis_result}}{A list of two tibbles and a ggplot plot, that
@@ -42,8 +42,8 @@ contain the result of text analysis, performed by self$analyze()}
 \itemize{
 \item \href{#method-add_negation_word}{\code{TweetAnalysis$add_negation_word()}}
 \item \href{#method-remove_negation_word}{\code{TweetAnalysis$remove_negation_word()}}
-\item \href{#method-add_filler_word}{\code{TweetAnalysis$add_filler_word()}}
-\item \href{#method-remove_filler_word}{\code{TweetAnalysis$remove_filler_word()}}
+\item \href{#method-add_stop_word}{\code{TweetAnalysis$add_stop_word()}}
+\item \href{#method-remove_stop_word}{\code{TweetAnalysis$remove_stop_word()}}
 \item \href{#method-analyze}{\code{TweetAnalysis$analyze()}}
 \item \href{#method-new}{\code{TweetAnalysis$new()}}
 \item \href{#method-clone}{\code{TweetAnalysis$clone()}}
@@ -86,37 +86,37 @@ word doesn't exists.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_filler_word"></a>}}
-\if{latex}{\out{\hypertarget{method-add_filler_word}{}}}
-\subsection{Method \code{add_filler_word()}}{
-Add word from filler_words (lower case). Throw a warning if the word
+\if{html}{\out{<a id="method-add_stop_word"></a>}}
+\if{latex}{\out{\hypertarget{method-add_stop_word}{}}}
+\subsection{Method \code{add_stop_word()}}{
+Add word from stop_words (lower case). Throw a warning if the word
 already exists.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$add_filler_word(filler_word)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$add_stop_word(word)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{filler_word}}{Filler word}
+\item{\code{word}}{Stop word}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-remove_filler_word"></a>}}
-\if{latex}{\out{\hypertarget{method-remove_filler_word}{}}}
-\subsection{Method \code{remove_filler_word()}}{
-Remove word from filler_words (lower case). Throw a warning if the word
+\if{html}{\out{<a id="method-remove_stop_word"></a>}}
+\if{latex}{\out{\hypertarget{method-remove_stop_word}{}}}
+\subsection{Method \code{remove_stop_word()}}{
+Remove word from stop_words (lower case). Throw a warning if the word
 doesn't exists.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$remove_filler_word(filler_word)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$remove_stop_word(word)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{filler_word}}{Filler word}
+\item{\code{word}}{Stop word}
 }
 \if{html}{\out{</div>}}
 }
@@ -126,7 +126,7 @@ doesn't exists.
 \if{latex}{\out{\hypertarget{method-analyze}{}}}
 \subsection{Method \code{analyze()}}{
 Conduct sentiment analysis on self$data, using self$lexicons,
-self$filler_words and self$negation_words.
+self$stop_words and self$negation_words.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$analyze()}\if{html}{\out{</div>}}
 }
@@ -138,15 +138,15 @@ self$filler_words and self$negation_words.
 \subsection{Method \code{new()}}{
 Pass in the stop_words internal data.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$new(filler_words, lexicons)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$new(stop_words, lexicons)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{filler_words}}{stop_words internal data that is available in
+\item{\code{stop_words}}{stop_words internal data that is available in
 R/sysdata.rda. I don't know why I need to initialize this, and
-simply doing filler_words = stop_words don't work?}
+simply doing stop_words = stop_words don't work?}
 
 \item{\code{lexicons}}{A list of tibbles containing lexicons.}
 }

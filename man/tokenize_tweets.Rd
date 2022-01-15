@@ -4,20 +4,14 @@
 \alias{tokenize_tweets}
 \title{Conduct Analysis}
 \usage{
-tokenize_tweets(
-  tweets,
-  lexicons,
-  filler_words,
-  negation_words,
-  adjust_negation
-)
+tokenize_tweets(tweets, lexicons, stop_words, negation_words, adjust_negation)
 }
 \arguments{
 \item{tweets}{Tweets to analyze. A tibble.}
 
 \item{lexicons}{Lexicons to use, A named list of tibbles.}
 
-\item{filler_words}{Filler words not relevant to analysis, from
+\item{stop_words}{stop words not relevant to analysis, from
 TweetAnalysis R6 class. A tibble.}
 
 \item{negation_words}{Negation words to use from TweetAnalysis R6 class.
@@ -29,7 +23,7 @@ adjustment.}
 \description{
 A function to conduct the text sentiment analysis. It first strips the text
 column of the HTML tags. Then, it tokenizes the texts with by 1 word, and
-weed out filler words. This tokenized tibble is `inner_join`'d with the
+weed out stop words. This tokenized tibble is `inner_join`'d with the
 lexicons to get the final score. If `adjust_negation` is "yes", then the
 bigram negation adjustment will be performed.
 }

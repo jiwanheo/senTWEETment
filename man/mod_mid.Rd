@@ -19,7 +19,7 @@ A shiny Module that contains the second step of the app,
 namely the 2 customizable aspects of the sentiment analysis. Firstly,
 Negation adjustment carries out the bi-gram adjustment to the original
 uni-gram analysis. Users can provide their own negation words. Secondly,
-users can specify their own filler words - words that are irrelevant to the
+users can specify their own stop words - words that are irrelevant to the
 sentiment of a sentence ('the', 'of'). For both these options, users can
 check if a word they'd like to submit already exists in the analysis by
 clicking "see list" button.

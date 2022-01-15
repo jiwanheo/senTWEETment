@@ -39,7 +39,7 @@ mod_main_server <- function(id){
 
     lexicons <- process_lexicons()
 
-    ta <- TweetAnalysis$new(filler_words = stop_words,
+    ta <- TweetAnalysis$new(stop_words = stop_words,
                             lexicons = lexicons)
     init("analyze-tweets")
 

@@ -37,8 +37,8 @@ TweetAnalysis <- R6Class(
                        "couldn't", "couldnt", "won't", "wont",
                        "can't", "cant"),
 
-    # Alot of the ones I added are already a filler word. (Let's think
-    # about if I want to remove them from the filler words or not.)
+    # Alot of the ones I added are already a word word. (Let's think
+    # about if I want to remove them from the word words or not.)
 
     #' @description
     #' Add word to negation_words (lower case). Throw a warning if the word
@@ -76,46 +76,46 @@ TweetAnalysis <- R6Class(
       invisible(self)
     },
 
-    # Filler words--------------------------------------------------------------
+    # Stop words--------------------------------------------------------------
 
-    #' @field filler_words  Stop words that are irrelevant from analysis.
+    #' @field stop_words  Stop words that are irrelevant from analysis.
     #' Dataset from tidytext.
-    filler_words = NULL,
+    stop_words = NULL,
 
     #' @description
-    #' Add word from filler_words (lower case). Throw a warning if the word
+    #' Add word from stop_words (lower case). Throw a warning if the word
     #' already exists.
-    #' @param filler_word Filler word
-    add_filler_word = function(filler_word) {
+    #' @param word Stop word
+    add_stop_word = function(word) {
 
-      filler_word <- tolower(filler_word)
+      word <- tolower(word)
 
-      if(!filler_word %in% self$filler_words$word) {
-        self$filler_words <- rbind(self$filler_words,
+      if(!word %in% self$stop_words$word) {
+        self$stop_words <- rbind(self$stop_words,
                                    tibble(word = c(word),
                                           lexicon = c("custom")))
       }
       else {
-        warning("Already a filler word!")
+        warning("Already a stop word!")
       }
 
       invisible(self)
     },
 
     #' @description
-    #' Remove word from filler_words (lower case). Throw a warning if the word
+    #' Remove word from stop_words (lower case). Throw a warning if the word
     #' doesn't exists.
-    #' @param filler_word Filler word
-    remove_filler_word = function(filler_word) {
+    #' @param word Stop word
+    remove_stop_word = function(word) {
 
-      filler_word <- tolower(filler_word)
+      word <- tolower(word)
 
-      if(filler_word %in% self$filler_words$word) {
-        self$filler_words <- self$filler_words %>%
-          filter(.data$word != filler_word)
+      if(word %in% self$stop_words$word) {
+        self$stop_words <- self$stop_words %>%
+          filter(.data$word != word)
       }
       else {
-        warning("Not a registered filler word!")
+        warning("Not a registered stop word!")
       }
 
       invisible(self)
@@ -125,7 +125,7 @@ TweetAnalysis <- R6Class(
 
     #' @description
     #' Conduct sentiment analysis on self$data, using self$lexicons,
-    #' self$filler_words and self$negation_words.
+    #' self$stop_words and self$negation_words.
     analyze = function() {
       if(is.null(self$data)) {
 
@@ -137,7 +137,7 @@ TweetAnalysis <- R6Class(
         analysis_outputs <- tokenize_tweets(
           tweets = self$data,
           lexicons = self$lexicons,
-          filler_words = self$filler_words,
+          stop_words = self$stop_words,
           negation_words = self$negation_words,
           adjust_negation = self$adjust_negation
         )
@@ -157,17 +157,17 @@ TweetAnalysis <- R6Class(
     #' @description
     #' Pass in the stop_words internal data.
     #'
-    #' @param filler_words stop_words internal data that is available in
+    #' @param stop_words stop_words internal data that is available in
     #' R/sysdata.rda. I don't know why I need to initialize this, and
-    #' simply doing filler_words = stop_words don't work?
+    #' simply doing stop_words = stop_words don't work?
     #'
     #' @param lexicons A list of tibbles containing lexicons.
     #'
-    initialize = function(filler_words, lexicons) {
-      stopifnot(is.data.frame(filler_words))
+    initialize = function(stop_words, lexicons) {
+      stopifnot(is.data.frame(stop_words))
       stopifnot(is.list(lexicons) & all(unlist(lapply(lexicons, is.data.frame))))
 
-      self$filler_words <- filler_words
+      self$stop_words <- stop_words
       self$lexicons <- lexicons
     }
   )

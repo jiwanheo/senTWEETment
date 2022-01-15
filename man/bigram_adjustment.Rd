@@ -4,7 +4,7 @@
 \alias{bigram_adjustment}
 \title{Bigram negation adjustment}
 \usage{
-bigram_adjustment(lexicons, text_stripped, negation_words, filler_words)
+bigram_adjustment(lexicons, text_stripped, negation_words, stop_words)
 }
 \arguments{
 \item{lexicons}{Lexicons to use, A named list of tibbles.}

@@ -4,7 +4,7 @@
 #' namely the 2 customizable aspects of the sentiment analysis. Firstly,
 #' Negation adjustment carries out the bi-gram adjustment to the original
 #' uni-gram analysis. Users can provide their own negation words. Secondly,
-#' users can specify their own filler words - words that are irrelevant to the
+#' users can specify their own stop words - words that are irrelevant to the
 #' sentiment of a sentence ('the', 'of'). For both these options, users can
 #' check if a word they'd like to submit already exists in the analysis by
 #' clicking "see list" button.
@@ -74,7 +74,7 @@ mod_mid_ui <- function(id){
 
       box(
         width = 6,
-        title = "Add custom filler words (Optional)",
+        title = "Custom stop words (Optional)",
         status = "primary",
         solidHeader = TRUE,
         collapsible = TRUE,
@@ -85,21 +85,21 @@ mod_mid_ui <- function(id){
         tags$br(),
 
         textInput(
-          ns("filler_word"),
+          ns("stop_word"),
           "Word",
           value = ""
         ),
 
         actionButton(
-          ns("add_filler_word"),
+          ns("add_stop_word"),
           "Add word"
         ),
         actionButton(
-          ns("remove_filler_word"),
+          ns("remove_stop_word"),
           "Remove word"
         ),
         actionButton(
-          ns("see_filler_words"),
+          ns("see_stop_words"),
           "See list"
         )
       ),
@@ -190,41 +190,41 @@ mod_mid_server <- function(id, ta){
       }
     })
 
-    # Filler Words--------------------------------------------------------------
+    # Stop Words--------------------------------------------------------------
 
-    observeEvent(input$add_filler_word, {
-      if(input$filler_word != "") {
+    observeEvent(input$add_stop_word, {
+      if(input$stop_word != "") {
 
         tryCatch_alert(
-          ta$add_filler_word(input$filler_word),
-          input_id = "filler_word",
+          ta$add_stop_word(input$stop_word),
+          input_id = "stop_word",
           type = "add"
         )
 
       }
     })
 
-    observeEvent(input$remove_filler_word, {
-      if(input$filler_word != "") {
+    observeEvent(input$remove_stop_word, {
+      if(input$stop_word != "") {
 
         tryCatch_alert(
-          ta$remove_filler_word(input$filler_word),
-          input_id = "filler_word",
+          ta$remove_stop_word(input$stop_word),
+          input_id = "stop_word",
           type = "remove"
         )
 
       }
     })
 
-    observeEvent(input$see_filler_words, {
+    observeEvent(input$see_stop_words, {
       shinyalert(
-        title = "List of filler words",
-        inputId = "shinyalert_see_filler_word1",
+        title = "List of stop words",
+        inputId = "shinyalert_see_stop_word1",
         closeOnClickOutside = TRUE,
         html = TRUE,
         text = tagList(
           renderDT(
-            datatable(tibble(word = ta$filler_words$word),
+            datatable(tibble(word = ta$stop_words$word),
                       class = "hover row-border",
                       options = list(pageLength = 5,
                                      scrollX = TRUE)

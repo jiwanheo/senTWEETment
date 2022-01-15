@@ -2,7 +2,7 @@
 #'
 #' @description A tryCatch with output wrapped in shinyalert.
 #' @param expr Expression to try. In our case, add/remove words from R6 fields.
-#' @param input_id the input ID of the text. (negation_word or filler_word)
+#' @param input_id the input ID of the text. (negation_word or stop_word)
 #' @param type A string, that makes the shinyalert ID. (add or remove)
 #' @importFrom shiny updateTextInput
 #' @importFrom shinyalert shinyalert
