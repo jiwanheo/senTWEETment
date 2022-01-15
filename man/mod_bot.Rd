@@ -11,6 +11,8 @@ mod_bot_server(id, ta)
 }
 \arguments{
 \item{id}{The Module namespace}
+
+\item{ta}{TweetAnalysis object, to hold analysis process in R6.}
 }
 \description{
 A shiny Module, that contains the last step of the app, namely

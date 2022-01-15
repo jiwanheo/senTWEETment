@@ -138,7 +138,7 @@ self$stop_words and self$negation_words.
 \subsection{Method \code{new()}}{
 Pass in the stop_words internal data.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$new(stop_words, lexicons)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$new(stop_words)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -147,8 +147,6 @@ Pass in the stop_words internal data.
 \item{\code{stop_words}}{stop_words internal data that is available in
 R/sysdata.rda. I don't know why I need to initialize this, and
 simply doing stop_words = stop_words don't work?}
-
-\item{\code{lexicons}}{A list of tibbles containing lexicons.}
 }
 \if{html}{\out{</div>}}
 }

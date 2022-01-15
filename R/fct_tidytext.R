@@ -33,15 +33,12 @@ get_lexicons <- function(retrieve = FALSE) {
 #'
 #' Get the lexicons, and process them to word-value format.
 #'
-#' @importFrom textdata lexicon_afinn lexicon_bing lexicon_nrc
 #' @importFrom magrittr %>%
 #' @importFrom dplyr transmute filter
 #' @importFrom rlang .data
 
 process_lexicons <- function() {
   lexicons <- get_lexicons(retrieve = TRUE)
-
-  afinn <- get_sentiments("afinn")
 
   lexicons$bing <- lexicons$bing %>%
     transmute(.data$word,
@@ -102,7 +99,7 @@ tokenize_tweets <- function(tweets,
 
   # INNER join with lexicons
   sentimented <- tokenized_stopped %>%
-    inner_join(lexicons$nrc, by = "word") # I have to find a way to do this with all the lexicons
+    inner_join(lexicons, by = "word") # I have to find a way to do this with all the lexicons
 
   # Bi-gram adjustment ----
 
@@ -147,7 +144,8 @@ tokenize_tweets <- function(tweets,
 #' @param lexicons Lexicons to use, A named list of tibbles.
 #' @param text_stripped Texts of tweets, processed in `produce_analysis_df`
 #' @param negation_words Negation words to use from TweetAnalysis R6 class.
-#' A tibble.
+#' A character vector.
+#' @param stop_words Stop words to use from TweetAnalysis R6 class. A tibble.
 #'
 #' @importFrom tidytext unnest_tokens
 #' @importFrom tidyr separate
@@ -159,7 +157,7 @@ tokenize_tweets <- function(tweets,
 bigram_adjustment <- function(lexicons, text_stripped, negation_words, stop_words) {
 
   stop_words <- stop_words %>%
-    filter(!word %in% negation_words)
+    filter(!.data$word %in% negation_words)
 
   # unigrams, stripped of stop words
   unigrams <- text_stripped %>%
@@ -190,7 +188,7 @@ bigram_adjustment <- function(lexicons, text_stripped, negation_words, stop_word
 
   negated_words <- bigrams %>%
     filter(.data$word1 %in% negation_words) %>%
-    inner_join(lexicons$nrc, by = c("word2" = "word")) %>%
+    inner_join(lexicons, by = c("word2" = "word")) %>%
     mutate(word1 = paste(.data$word1, .data$word2)) %>%
     pmap_dfr(function(row_num, word1, word2, value){
       data.frame(row_num = row_num,

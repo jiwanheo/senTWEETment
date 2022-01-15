@@ -128,9 +128,11 @@ TweetAnalysis <- R6Class(
     #' self$stop_words and self$negation_words.
     analyze = function() {
       if(is.null(self$data)) {
-
         stop("No tweets pulled yet!")
-
+        invisible(self)
+      }
+      else if(is.null(self$lexicons)) {
+        stop("No lexicons selected!")
         invisible(self)
       }
       else {
@@ -161,14 +163,11 @@ TweetAnalysis <- R6Class(
     #' R/sysdata.rda. I don't know why I need to initialize this, and
     #' simply doing stop_words = stop_words don't work?
     #'
-    #' @param lexicons A list of tibbles containing lexicons.
     #'
-    initialize = function(stop_words, lexicons) {
+    initialize = function(stop_words) {
       stopifnot(is.data.frame(stop_words))
-      stopifnot(is.list(lexicons) & all(unlist(lapply(lexicons, is.data.frame))))
 
       self$stop_words <- stop_words
-      self$lexicons <- lexicons
     }
   )
 )

@@ -18,7 +18,12 @@
 golem::add_module(name = "header") # Name of the module
 golem::add_module(name = "main") # Name of the module
 golem::add_module(name = "top") # Name of the module
+
 golem::add_module(name = "mid") # Name of the module
+golem::add_module(name = "mid_lexicons") # Name of the module
+golem::add_module(name = "mid_stop_words") # Name of the module
+golem::add_module(name = "mid_negation_words") # Name of the module
+
 golem::add_module(name = "bot") # Name of the module
 golem::add_module(name = "creds_modal") # Name of the module
 

@@ -12,7 +12,9 @@ bigram_adjustment(lexicons, text_stripped, negation_words, stop_words)
 \item{text_stripped}{Texts of tweets, processed in `produce_analysis_df`}
 
 \item{negation_words}{Negation words to use from TweetAnalysis R6 class.
-A tibble.}
+A character vector.}
+
+\item{stop_words}{Stop words to use from TweetAnalysis R6 class. A tibble.}
 }
 \description{
 Makes adjustments to assign a negative score to phrases like "I am not happy",

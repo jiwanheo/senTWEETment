@@ -12,236 +12,50 @@
 
 #' @param id The Module namespace
 #' @rdname mod_mid
-#' @importFrom shiny NS tagList HTML textInput actionButton radioButtons
+#' @importFrom shiny NS HTML tagList
 #' @importFrom shinydashboard box
 mod_mid_ui <- function(id){
   ns <- NS(id)
   tagList(
-    box(
-      width = 12,
-      title = "Step 2: Customize Analysis",
-      status = "primary",
-      solidHeader = TRUE,
-      collapsible = TRUE,
-      collapsed = TRUE,
-
-      col_12(
-        tags$p(HTML("The analysis in this app follows the one-token-per-row method, suggested in <a href='https://www.tidytextmining.com/index.html'>Text Mining with R</a>.
-                    A tweet is broken up into tokens, a meaningful unit of texts (1 or 2 words for us). Then, each token is matched with a sentiment score, by looking it up on
-                    a word-score dictionary. We'll use three (AFINN, bing, nrc). At the end, all scores are added, to determine the overall sentiment of a tweet."))
-      ),
-
-      box(
-        width = 6,
-        title = "Negation adjustment (Default Yes)",
+    box(width = 12,
+        title = "Step 2: Customize Analysis",
         status = "primary",
         solidHeader = TRUE,
         collapsible = TRUE,
         collapsed = TRUE,
 
-        tags$p(HTML("Look for bi-grams that start with a negative word. If the second word has a sentiment as a unigram, cancel it out, and add the sentiment of the bigram to the sentiment <br>
-                    For example, in a unigram analysis, the sentence 'I am <strong>not</strong> happy' returns a positive sentiment. The adjustment cancels out the positive sentiment of 'happy', and add the negative sentiment of 'not happy'. <br>
-                    Feel free to add/remove words.")),
-        tags$br(),
-
-        radioButtons(
-          ns("adjust_negation"),
-          "Adjust?",
-          choices = c("Yes", "No"),
-          selected = "Yes",
-          inline = TRUE
+        col_12(
+          tags$p(HTML("This lexicon-based sentiment analysis follows methods suggested in <a href='https://www.tidytextmining.com/index.html'>Text Mining with R</a>."))
         ),
 
-        textInput(
-          ns("negation_word"),
-          "Word",
-          value = ""
-        ),
+        mod_mid_lexicons_ui(ns("mid_lexicons_1")),
+        mod_mid_negation_words_ui(ns("mid_negation_words_1")),
+        mod_mid_stop_words_ui(ns("mid_stop_words_1")),
 
-        actionButton(
-          ns("add_negation_word"),
-          "Add word"
-        ),
-        actionButton(
-          ns("remove_negation_word"),
-          "Remove word"
-        ),
-        actionButton(
-          ns("see_negation_words"),
-          "See list"
+        col_12(
+          class = "text-center",
+          actionButton(ns("analyze"),"Analyze!")
         )
-      ),
-
-      box(
-        width = 6,
-        title = "Custom stop words (Optional)",
-        status = "primary",
-        solidHeader = TRUE,
-        collapsible = TRUE,
-        collapsed = TRUE,
-
-        tags$p(HTML("Words like <strong>'the', 'of', 'to'</strong> don't hold much meaning, and are excluded. (Not applied to negation adjustment) <br>
-                    Feel free to add/remove words.")),
-        tags$br(),
-
-        textInput(
-          ns("stop_word"),
-          "Word",
-          value = ""
-        ),
-
-        actionButton(
-          ns("add_stop_word"),
-          "Add word"
-        ),
-        actionButton(
-          ns("remove_stop_word"),
-          "Remove word"
-        ),
-        actionButton(
-          ns("see_stop_words"),
-          "See list"
-        )
-      ),
-
-      col_12(
-        class = "text-center",
-        actionButton(ns("analyze"),"Analyze!")
-      )
     )
   )
 }
 
 #' @rdname mod_mid
 #' @param ta TweetAnalysis object, to hold analysis process in R6.
-#' @importFrom shiny moduleServer reactiveVal updateTextInput tagList
-#' @importFrom tidytext get_sentiments
-#' @importFrom dplyr transmute filter
+#' @importFrom shiny moduleServer observeEvent
 #' @importFrom shinyalert shinyalert
-#' @importFrom DT renderDT datatable
-#' @importFrom shinyjs disable enable
 mod_mid_server <- function(id, ta){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-
-
-
-    # produce_analysis_df(tweets, lexicons)
-
-
-    # Negation Words------------------------------------------------------------
-
-    observeEvent(input$add_negation_word, {
-      if(input$negation_word != "") {
-
-        tryCatch_alert(
-          ta$add_negation_word(input$negation_word),
-          input_id = "negation_word",
-          type = "add"
-        )
-
-      }
-    })
-
-    observeEvent(input$remove_negation_word, {
-      if(input$negation_word != "") {
-
-        tryCatch_alert(
-          ta$remove_negation_word(input$negation_word),
-          input_id = "negation_word",
-          type = "remove"
-        )
-
-      }
-    })
-
-    observeEvent(input$see_negation_words, {
-      shinyalert(
-        title = "List of negation words",
-        inputId = "shinyalert_see_negation_word1",
-        closeOnClickOutside = TRUE,
-        html = TRUE,
-        text = tagList(
-          renderDT(
-            datatable(tibble(word = ta$negation_words),
-                      class = "hover row-border",
-                      options = list(pageLength = 5,
-                                     searching = FALSE,
-                                     lengthChange = FALSE)
-            )
-          )
-        )
-      )
-    })
-
-    # Disable adjustment options, if "No" for adjust.
-    observeEvent(input$adjust_negation, {
-      if(input$adjust_negation == "No") {
-        disable("negation_word")
-        disable("add_negation_word")
-        disable("remove_negation_word")
-        disable("see_negation_words")
-      } else {
-        enable("negation_word")
-        enable("add_negation_word")
-        enable("remove_negation_word")
-        enable("see_negation_words")
-      }
-    })
-
-    # Stop Words--------------------------------------------------------------
-
-    observeEvent(input$add_stop_word, {
-      if(input$stop_word != "") {
-
-        tryCatch_alert(
-          ta$add_stop_word(input$stop_word),
-          input_id = "stop_word",
-          type = "add"
-        )
-
-      }
-    })
-
-    observeEvent(input$remove_stop_word, {
-      if(input$stop_word != "") {
-
-        tryCatch_alert(
-          ta$remove_stop_word(input$stop_word),
-          input_id = "stop_word",
-          type = "remove"
-        )
-
-      }
-    })
-
-    observeEvent(input$see_stop_words, {
-      shinyalert(
-        title = "List of stop words",
-        inputId = "shinyalert_see_stop_word1",
-        closeOnClickOutside = TRUE,
-        html = TRUE,
-        text = tagList(
-          renderDT(
-            datatable(tibble(word = ta$stop_words$word),
-                      class = "hover row-border",
-                      options = list(pageLength = 5,
-                                     scrollX = TRUE)
-            )
-          )
-        )
-      )
-    })
-
-    # Analyze-------------------------------------------------------------------
+    mod_mid_lexicons_server("mid_lexicons_1", ta)
+    mod_mid_negation_words_server("mid_negation_words_1", ta)
+    mod_mid_stop_words_server("mid_stop_words_1", ta)
 
     observeEvent(input$analyze, {
       # Do the analysis, with the R6 method, and assign it to a field in R6
       tryCatch({
-
         ta$analysis_result <- ta$analyze()
-
         trigger("analyze-tweets")
 
         shinyalert(

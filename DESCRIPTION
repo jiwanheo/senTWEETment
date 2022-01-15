@@ -15,6 +15,7 @@ Imports:
     magrittr,
     purrr,
     R6,
+    readr,
     rlang,
     rtweet,
     shiny (>= 1.7.1),

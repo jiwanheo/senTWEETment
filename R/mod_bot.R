@@ -40,6 +40,7 @@ mod_bot_ui <- function(id){
 }
 
 #' @rdname mod_bot
+#' @param ta TweetAnalysis object, to hold analysis process in R6.
 #' @importFrom shiny moduleServer renderText renderPlot
 #' @importFrom DT datatable renderDT
 mod_bot_server <- function(id, ta){
