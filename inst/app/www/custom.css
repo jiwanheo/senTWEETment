@@ -4,5 +4,9 @@
 }
 
 .lexicon-section {
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
+}
+
+#main_1-bot_1-output_summary {
+  font-size: 2rem;
 }

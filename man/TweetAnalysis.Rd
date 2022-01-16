@@ -45,6 +45,7 @@ contain the result of text analysis, performed by self$analyze()}
 \item \href{#method-add_stop_word}{\code{TweetAnalysis$add_stop_word()}}
 \item \href{#method-remove_stop_word}{\code{TweetAnalysis$remove_stop_word()}}
 \item \href{#method-analyze}{\code{TweetAnalysis$analyze()}}
+\item \href{#method-print_analysis}{\code{TweetAnalysis$print_analysis()}}
 \item \href{#method-new}{\code{TweetAnalysis$new()}}
 \item \href{#method-clone}{\code{TweetAnalysis$clone()}}
 }
@@ -133,6 +134,16 @@ self$stop_words and self$negation_words.
 
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-print_analysis"></a>}}
+\if{latex}{\out{\hypertarget{method-print_analysis}{}}}
+\subsection{Method \code{print_analysis()}}{
+Prints out key information about the analysis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$print_analysis()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
@@ -147,6 +158,8 @@ Pass in the stop_words internal data.
 \item{\code{stop_words}}{stop_words internal data that is available in
 R/sysdata.rda. I don't know why I need to initialize this, and
 simply doing stop_words = stop_words don't work?}
+
+\item{\code{word}}{Stop word}
 }
 \if{html}{\out{</div>}}
 }

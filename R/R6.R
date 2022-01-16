@@ -154,6 +154,18 @@ TweetAnalysis <- R6Class(
     #' contain the result of text analysis, performed by self$analyze()
     analysis_result = NULL,
 
+
+    #' @description
+    #' Prints out key information about the analysis.
+    print_analysis = function() {
+
+      total_tweets <- paste("# of tweets:", nrow(self$data))
+      sent_sum <- paste("Overall sentiment:", self$analysis_result$overall_scores$sentiment_sum)
+      sent_avg <- paste("Average sentiment per tweet:", self$analysis_result$overall_scores$sentiment_avg)
+
+      paste0(total_tweets, '<br>', sent_sum, '<br>', sent_avg)
+    },
+    #' @param word Stop word
     # Initialize ---------------------------------------------------------------
 
     #' @description

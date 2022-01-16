@@ -44,6 +44,8 @@ mod_mid_ui <- function(id){
 #' @param ta TweetAnalysis object, to hold analysis process in R6.
 #' @importFrom shiny moduleServer observeEvent
 #' @importFrom shinyalert shinyalert
+#' @importFrom waiter waiter_show spin_fading_circles waiter_hide
+
 mod_mid_server <- function(id, ta){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
@@ -55,8 +57,18 @@ mod_mid_server <- function(id, ta){
     observeEvent(input$analyze, {
       # Do the analysis, with the R6 method, and assign it to a field in R6
       tryCatch({
+        waiter_show(
+          html = tagList(
+            spin_fading_circles(),
+            "Loading ..."
+          ),
+          color = "rgba(0, 0, 0, 0.5)"
+        )
+
         ta$analysis_result <- ta$analyze()
         trigger("analyze-tweets")
+
+        waiter_hide()
 
         shinyalert(
           title = "Analysis Complete!",
@@ -71,13 +83,7 @@ mod_mid_server <- function(id, ta){
           inputId = "r6_analyze_error"
         )
       })
-
-      # Should probably trigger something here, so the next step can respond.
-
     })
-
-
-
   })
 }
 

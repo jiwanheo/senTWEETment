@@ -7,7 +7,7 @@
 
 #' @param id The Module namespace
 #' @rdname mod_bot
-#' @importFrom shiny NS tagList textOutput plotOutput downloadButton
+#' @importFrom shiny NS tagList textOutput plotOutput htmlOutput
 #' @importFrom shinydashboard box
 #' @importFrom DT DTOutput
 mod_bot_ui <- function(id){
@@ -22,18 +22,12 @@ mod_bot_ui <- function(id){
       collapsed = TRUE,
 
       col_12(
-        tags$h3("Analysis result"),
-        textOutput(ns("sentiment_score")),
-        plotOutput(ns("word_score"))
+        htmlOutput(ns("output_summary")),
+        plotOutput(ns("output_plot"))
       ),
       col_12(
-        tags$h3("Methodologies & input data"),
-        textOutput(ns("methodologies")),
-        DTOutput(ns("input_data"))
-      ),
-      col_12(
-        downloadButton(ns("download_analysis"), "Download Analysis (pdf)"),
-        downloadButton(ns("download_tweets"), "Download tweets (csv)")
+        DTOutput(ns("output_data")),
+        DTOutput(ns("output_data2"))
       )
     )
   )
@@ -42,23 +36,20 @@ mod_bot_ui <- function(id){
 #' @rdname mod_bot
 #' @param ta TweetAnalysis object, to hold analysis process in R6.
 #' @importFrom shiny moduleServer renderText renderPlot
-#' @importFrom DT datatable renderDT
+#' @importFrom DT datatable renderDT formatStyle styleInterval
 mod_bot_server <- function(id, ta){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    output$sentiment_score <- renderText({
+    output$output_summary <- renderText({
 
       watch("analyze-tweets")
-      req(!is.null(ta$analysis_result$overall_score))
+      req(!is.null(ta$analysis_result$overall_scores))
 
-      score <- ta$analysis_result$overall_score
-      score <- ifelse(score < 0, paste0("-", score), paste0("+", score))
-
-      paste("The overall sentiment is", score)
+      ta$print_analysis()
     })
 
-    output$word_score <- renderPlot({
+    output$output_plot <- renderPlot({
 
       watch("analyze-tweets")
       req(!is.null(ta$analysis_result$word_plot))
@@ -67,7 +58,7 @@ mod_bot_server <- function(id, ta){
 
     })
 
-    output$input_data <- renderDT({
+    output$output_data <- renderDT({
 
       watch("analyze-tweets")
       req(!is.null(ta$analysis_result$all_tweets_scored))
@@ -76,15 +67,32 @@ mod_bot_server <- function(id, ta){
                 class = "hover row-border",
                 escape = FALSE,
                 options = list(scrollX = TRUE,
-                               pageLength = 5),
-                caption = "Tweets that were analyzed")
+                               pageLength = 5)) %>%
+        formatStyle(
+          'Sentiment',
+          backgroundColor = styleInterval(c(-0.5, 0.5), c('hsla(0, 100%, 78%, 0.7)',
+                                                          'hsla(0, 0%, 100%, 1)',
+                                                          'hsla(137, 66%, 72%, 0.63)'))
+        )
     })
 
-    output$methodologies <- renderText({
-      "500 tweets were analyzed using the 'AFINN' Unigram dictionary\n
-      The biggest contributor was the word 'happy'"
-    })
+    output$output_data2 <- renderDT({
 
+      watch("analyze-tweets")
+      req(!is.null(ta$analysis_result$all_words_scored))
+
+      datatable(ta$analysis_result$all_words_scored,
+                class = "hover row-border",
+                escape = FALSE,
+                options = list(scrollX = TRUE,
+                               pageLength = 5)) %>%
+        formatStyle(
+          'Sentiment',
+          backgroundColor = styleInterval(c(-0.5, 0.5), c('hsla(0, 100%, 78%, 0.7)',
+                                                          'hsla(0, 0%, 100%, 1)',
+                                                          'hsla(137, 66%, 72%, 0.63)'))
+        )
+    })
   })
 }
 

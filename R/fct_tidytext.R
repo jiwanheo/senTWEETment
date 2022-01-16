@@ -207,7 +207,7 @@ bigram_adjustment <- function(lexicons, text_stripped, negation_words, stop_word
 #' @param dfs A list of tibbles, passed from `tokenize_tweets`. This list
 #' contains the original tweets, as well as tokenized sentiments.
 #' @importFrom dplyr group_by summarize left_join mutate arrange slice_max
-#' @importFrom ggplot2 ggplot aes geom_col
+#' @importFrom ggplot2 ggplot aes geom_col labs
 #' @importFrom forcats fct_reorder
 
 produce_analysis_output <- function(dfs) {
@@ -221,9 +221,18 @@ produce_analysis_output <- function(dfs) {
     mutate(Sentiment = ifelse(is.na(.data$Sentiment), 0, .data$Sentiment)) %>%
     select(-.data$row_num)
 
-  overall_score <- all_tweets_scored %>%
-    summarize(Sentiment = sum(.data$Sentiment)) %>%
-    as.numeric()
+  all_words_scored <- dfs$tweets %>%
+    left_join(dfs$sentimented, by = "row_num") %>%
+    mutate(value = ifelse(is.na(.data$value), 0, .data$value)) %>%
+    select(-c(.data$row_num, .data$User, .data$Date, .data$Text))
+  names(all_words_scored) <- c("Picture", "Word", "Sentiment")
+
+  overall_scores <- all_tweets_scored %>%
+    summarize(sentiment_sum = sum(.data$Sentiment),
+              sentiment_avg = round(mean(.data$Sentiment), digits = 2)) %>%
+    mutate(sentiment_sum = ifelse(.data$sentiment_sum < 0, .data$sentiment_sum, paste0("+", .data$sentiment_sum)),
+           sentiment_avg = ifelse(.data$sentiment_avg < 0, .data$sentiment_avg, paste0("+", .data$sentiment_avg))) %>%
+    as.list()
 
   word_plot <- dfs$sentimented %>%
     group_by(.data$word) %>%
@@ -232,12 +241,15 @@ produce_analysis_output <- function(dfs) {
     mutate(word = fct_reorder(.data$word, .data$Sentiment)) %>%
     mutate(is_positive = .data$Sentiment > 0) %>%
     ggplot(aes(.data$Sentiment, .data$word, fill = .data$is_positive)) +
-    geom_col()
+    geom_col(show.legend = FALSE) +
+    labs(title = "Top 20 words with most impact on sentiment",
+         y = "")
 
   list(
     sentiment_by_tweet = sentiment_by_tweet,
+    all_words_scored = all_words_scored,
     all_tweets_scored = all_tweets_scored,
-    overall_score = overall_score,
+    overall_scores = overall_scores,
     word_plot = word_plot
   )
 }
