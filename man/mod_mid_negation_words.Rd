@@ -16,6 +16,11 @@ mod_mid_negation_words_server(id, ta)
 }
 \description{
 Called from mod_mid, this module is responsible for adding/removing/seeing
-the list of negation words used for the analysis. Everytime this list is edited,
-it directly edits the `negation_words` field in R6 right away, without trigger.
+the list of negation words used for the analysis. Everytime this list is
+edited, it directly edits the \code{negation_words} field in R6 right away,
+without trigger. Further details on the process can be found in
+\code{bigram_adjustment()}
+}
+\seealso{
+\code{\link[=bigram_adjustment]{bigram_adjustment()}}
 }

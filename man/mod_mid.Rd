@@ -15,12 +15,16 @@ mod_mid_server(id, ta)
 \item{ta}{TweetAnalysis object, to hold analysis process in R6.}
 }
 \description{
-A shiny Module that contains the second step of the app,
-namely the 2 customizable aspects of the sentiment analysis. Firstly,
-Negation adjustment carries out the bi-gram adjustment to the original
-uni-gram analysis. Users can provide their own negation words. Secondly,
-users can specify their own stop words - words that are irrelevant to the
-sentiment of a sentence ('the', 'of'). For both these options, users can
-check if a word they'd like to submit already exists in the analysis by
-clicking "see list" button.
+A shiny Module that contains the second step of the app, namely the 3
+customizable aspects of the sentiment analysis, broken up into their own
+module. After customization, users can initiate the analysis, which will be
+saved in ta R6 object. Finally, it triggers the "analyze-tweets" trigger.
+}
+\details{
+Child Modules
+\itemize{
+\item{mod_mid_lexicons:} {Choose sentiment lexicons}
+\item{mod_mid_negation_words:} {Carries out bigram negation adjustment}
+\item{mod_mid_stop_words:} {Add/remove stop words}
+}
 }

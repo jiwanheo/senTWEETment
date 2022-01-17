@@ -7,7 +7,7 @@
 produce_analysis_output(dfs)
 }
 \arguments{
-\item{dfs}{A list of tibbles, passed from `tokenize_tweets`. This list
+\item{dfs}{A list of tibbles, passed from \code{tokenize_tweets}. This list
 contains the original tweets, as well as tokenized sentiments.}
 }
 \description{

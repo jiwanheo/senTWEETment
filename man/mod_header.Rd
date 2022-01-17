@@ -13,6 +13,6 @@ mod_header_server(id)
 \item{id}{The Module namespace}
 }
 \description{
-A shiny Module, that contains the header of the app,
+A shiny Module that contains the header of the app,
 namely the title and the image.
 }

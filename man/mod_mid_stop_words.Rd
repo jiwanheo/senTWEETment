@@ -17,5 +17,5 @@ mod_mid_stop_words_server(id, ta)
 \description{
 Called from mod_mid, this module is responsible for adding/removing/seeing
 the list of stop words used for the analysis. Everytime this list is edited,
-it directly edits the `stop_words` field in R6 right away, without trigger.
+it directly edits the \code{stop_words} field in R6 right away, without trigger.
 }

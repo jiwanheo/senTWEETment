@@ -12,14 +12,9 @@ R6 class of tweet analyzing process
 R6 object to encapsulate the reading/cleaning/export of tweets
 }
 \section{Public fields}{
-
-* `data`: Tweets in tibble.
-}
-
-\section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{data}}{Pulled tweets. This is subject to change, every time a set
+\item{\code{data}}{Pulled tweets in tibble. This is subject to change, every time a set
 of tweets are pulled.}
 
 \item{\code{lexicons}}{A list of tibbles containing lexicons. It is NULL by
@@ -29,8 +24,8 @@ default, but is given the list at initialization}
 
 \item{\code{negation_words}}{Negation words used for bi-gram adjustments.}
 
-\item{\code{stop_words}}{Stop words that are irrelevant from analysis.
-Dataset from tidytext.}
+\item{\code{stop_words}}{A tibble of stop words that are irrelevant from
+analysis. Dataset from tidytext is passed, during initialize.}
 
 \item{\code{analysis_result}}{A list of two tibbles and a ggplot plot, that
 contain the result of text analysis, performed by self$analyze()}
@@ -57,13 +52,13 @@ contain the result of text analysis, performed by self$analyze()}
 Add word to negation_words (lower case). Throw a warning if the word
 already exists.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$add_negation_word(negation_word)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$add_negation_word(word)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{negation_word}}{Negation word}
+\item{\code{word}}{Negation word}
 }
 \if{html}{\out{</div>}}
 }
@@ -75,13 +70,13 @@ already exists.
 Remove word from negation_words (lower case). Throw a warning if the
 word doesn't exists.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$remove_negation_word(negation_word)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$remove_negation_word(word)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{negation_word}}{Negation word}
+\item{\code{word}}{Negation word}
 }
 \if{html}{\out{</div>}}
 }
@@ -126,8 +121,17 @@ doesn't exists.
 \if{html}{\out{<a id="method-analyze"></a>}}
 \if{latex}{\out{\hypertarget{method-analyze}{}}}
 \subsection{Method \code{analyze()}}{
-Conduct sentiment analysis on self$data, using self$lexicons,
-self$stop_words and self$negation_words.
+Conduct sentiment analysis. It calls \code{conduct_analysis} using arguments:
+\itemize{
+\item{self$data}
+\item{self$lexicons}
+\item{self$stop_words}
+\item{self$negation_words}
+\item{self$adjust_negation}
+}
+Which returns a list of tibbles. This list is fed to
+\code{produce_analysis_output} to produce final outputs, and are saved into
+\code{self$analysis_result}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$analyze()}\if{html}{\out{</div>}}
 }
@@ -137,7 +141,13 @@ self$stop_words and self$negation_words.
 \if{html}{\out{<a id="method-print_analysis"></a>}}
 \if{latex}{\out{\hypertarget{method-print_analysis}{}}}
 \subsection{Method \code{print_analysis()}}{
-Prints out key information about the analysis.
+Prints out key information about the analysis, as a vector of characters
+including html br tag.
+\itemize{
+\item{# of tweets}
+\item{Overall sentiment}
+\item{Average sentiment per tweet}
+}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$print_analysis()}\if{html}{\out{</div>}}
 }
@@ -147,7 +157,7 @@ Prints out key information about the analysis.
 \if{html}{\out{<a id="method-new"></a>}}
 \if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
-Pass in the stop_words internal data.
+Generate a new class. It requires the stop_words internal data.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TweetAnalysis$new(stop_words)}\if{html}{\out{</div>}}
 }
@@ -155,11 +165,7 @@ Pass in the stop_words internal data.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{stop_words}}{stop_words internal data that is available in
-R/sysdata.rda. I don't know why I need to initialize this, and
-simply doing stop_words = stop_words don't work?}
-
-\item{\code{word}}{Stop word}
+\item{\code{stop_words}}{stop_words internal data.}
 }
 \if{html}{\out{</div>}}
 }

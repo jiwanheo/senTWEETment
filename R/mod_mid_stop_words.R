@@ -6,7 +6,6 @@
 #'
 #' @rdname mod_mid_stop_words
 #' @param id The Module namespace
-#'
 #' @importFrom shiny moduleServer NS HTML tagList actionButton
 #' @importFrom shinydashboard box
 mod_mid_stop_words_ui <- function(id){

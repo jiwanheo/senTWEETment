@@ -9,7 +9,7 @@ bigram_adjustment(lexicons, text_stripped, negation_words, stop_words)
 \arguments{
 \item{lexicons}{Lexicons to use, A named list of tibbles.}
 
-\item{text_stripped}{Texts of tweets, processed in `produce_analysis_df`}
+\item{text_stripped}{Texts of tweets, processed in \code{produce_analysis_df}}
 
 \item{negation_words}{Negation words to use from TweetAnalysis R6 class.
 A character vector.}
@@ -25,7 +25,7 @@ at single word at a time).
 Traditionally, a single word tokenization results in a single row of
 "word to sentiment value" per word. This function tokenizes the texts with 2
 words. Any token that has as the first word, a negative word per
-`negation_words`, instead gets two rows. One with the full 2-word token, and
+\code{negation_words}, instead gets two rows. One with the full 2-word token, and
 another row with the original word. The sentiment value of both rows is the
 sentiment value of the original word multiplied by -1. Then both these rows
 are appended to the 1-word-tokenized tibble, and are summed at the word/tweet

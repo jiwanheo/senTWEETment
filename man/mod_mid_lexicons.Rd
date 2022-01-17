@@ -17,5 +17,14 @@ mod_mid_lexicons_server(id, ta)
 \description{
 Called from mod_mid, this module is responsible for retrieving the Lexicons
 to be used for sentiment analysis. Everytime the lexicon is changed,
-it directly edits the `lexicons` field in R6 right away, without trigger.
+it directly edits the \code{lexicons} field in R6 right away, without trigger.
+}
+\details{
+Currently it supports 3 lexicons + user-uploaded csv file
+\itemize{
+\item{AFINN}
+\item{Bing}
+\item{nrc}
+\item{User-uploaded csv:} {a dataframe with column names "word" & "value"}
+}
 }

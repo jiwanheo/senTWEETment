@@ -74,11 +74,11 @@ process_lexicons <- function() {
 #' @importFrom magrittr %>%
 #' @importFrom tidytext unnest_tokens
 #' @importFrom rlang .data
-tokenize_tweets <- function(tweets,
-                            lexicons,
-                            stop_words,
-                            negation_words,
-                            adjust_negation) {
+conduct_analysis <- function(tweets,
+                             lexicons,
+                             stop_words,
+                             negation_words,
+                             adjust_negation) {
 
   # `row_num` is used as a join column between original tweets and tokens.
   tweets <- tweets %>%
@@ -114,15 +114,10 @@ tokenize_tweets <- function(tweets,
       filter(.data$value != 0)
   }
 
-  # To pass to next function ----
-
-  dfs <- list(
+  list(
     tweets = tweets,
     sentimented = sentimented
   )
-
-  produce_analysis_output(dfs)
-
 }
 
 #' Bigram negation adjustment

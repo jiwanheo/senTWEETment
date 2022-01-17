@@ -1,5 +1,6 @@
 #' Header module
-#' @description A shiny Module, that contains the header of the app,
+#'
+#' A shiny Module that contains the header of the app,
 #' namely the title and the image.
 
 #' @rdname mod_header

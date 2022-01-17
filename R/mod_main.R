@@ -40,14 +40,12 @@ mod_main_server <- function(id){
     ta <- TweetAnalysis$new(stop_words = stop_words)
     init("analyze-tweets")
 
-
     # Try to authenticate with rds. If fails, launch ask user for token.
     tryCatch({
-      auth_as("my-twitter-app")
+      connect_to_api("my-twitter-app")
     }, error = function(e) {
       mod_creds_modal_server("creds_modal_1")
     })
-
 
     mod_header_server("header_1")
     mod_top_server("top_1", ta)

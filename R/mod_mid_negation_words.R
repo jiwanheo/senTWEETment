@@ -1,13 +1,15 @@
 #' mid_negation_words module
 #'
 #' Called from mod_mid, this module is responsible for adding/removing/seeing
-#' the list of negation words used for the analysis. Everytime this list is edited,
-#' it directly edits the `negation_words` field in R6 right away, without trigger.
+#' the list of negation words used for the analysis. Everytime this list is
+#' edited, it directly edits the `negation_words` field in R6 right away,
+#' without trigger. Further details on the process can be found in
+#' `bigram_adjustment()`
 #'
 #' @rdname mod_mid_negation_words
 #' @param id The Module namespace
-#'
 #' @importFrom shiny moduleServer NS HTML tagList radioButtons textInput actionButton
+#' @seealso [bigram_adjustment()]
 mod_mid_negation_words_ui <- function(id){
   ns <- NS(id)
 

@@ -50,7 +50,12 @@ usethis::use_data_raw(name = "my_dataset", open = FALSE)
 
 ## Tests ----
 ## Add one line by test you want to create
-usethis::use_test("app")
+usethis::use_test("fct_twitter")
+usethis::use_test("lookup_coords_nominatim")
+usethis::use_test("mod_mid")
+usethis::use_test("fct_tidytext_lexicons")
+usethis::use_test("fct_tidytext_analysis")
+usethis::use_test("R6")
 
 # Documentation
 

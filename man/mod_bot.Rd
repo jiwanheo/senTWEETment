@@ -3,7 +3,11 @@
 \name{mod_bot_ui}
 \alias{mod_bot_ui}
 \alias{mod_bot_server}
-\title{Bottom module}
+\title{Bottom module
+A shiny Module, that contains the last step of the app, namely
+the resulting analysis, and a download button. The analysis output contains
+the information about the data & method feeding in, and of course, the
+sentiment score.}
 \usage{
 mod_bot_ui(id)
 
@@ -15,8 +19,9 @@ mod_bot_server(id, ta)
 \item{ta}{TweetAnalysis object, to hold analysis process in R6.}
 }
 \description{
+Bottom module
 A shiny Module, that contains the last step of the app, namely
-the resulting analysis, and a download button. The analysis should contain
+the resulting analysis, and a download button. The analysis output contains
 the information about the data & method feeding in, and of course, the
 sentiment score.
 }

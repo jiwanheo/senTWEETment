@@ -1,7 +1,7 @@
 #' Bottom module
 
-#' @description A shiny Module, that contains the last step of the app, namely
-#' the resulting analysis, and a download button. The analysis should contain
+#' A shiny Module, that contains the last step of the app, namely
+#' the resulting analysis, and a download button. The analysis output contains
 #' the information about the data & method feeding in, and of course, the
 #' sentiment score.
 

@@ -9,16 +9,13 @@
 #' @importFrom rlang .data
 #' @importFrom shinyalert shinyalert
 #'
-#' @section Public fields:
-#' * `data`: Tweets in tibble.
 TweetAnalysis <- R6Class(
   "TweetAnalysis",
   public = list(
 
-    #' @field data Pulled tweets. This is subject to change, every time a set
+    #' @field data Pulled tweets in tibble. This is subject to change, every time a set
     #' of tweets are pulled.
     data = NULL,
-
 
     #' @field lexicons A list of tibbles containing lexicons. It is NULL by
     #' default, but is given the list at initialization
@@ -43,10 +40,10 @@ TweetAnalysis <- R6Class(
     #' @description
     #' Add word to negation_words (lower case). Throw a warning if the word
     #' already exists.
-    #' @param negation_word Negation word
-    add_negation_word = function(negation_word) {
+    #' @param word Negation word
+    add_negation_word = function(word) {
 
-      negation_word <- tolower(negation_word)
+      negation_word <- tolower(word)
 
       if(!negation_word %in% self$negation_words) {
         self$negation_words <- c(self$negation_words, negation_word)
@@ -61,10 +58,10 @@ TweetAnalysis <- R6Class(
     #' @description
     #' Remove word from negation_words (lower case). Throw a warning if the
     #' word doesn't exists.
-    #' @param negation_word Negation word
-    remove_negation_word = function(negation_word) {
+    #' @param word Negation word
+    remove_negation_word = function(word) {
 
-      negation_word <- tolower(negation_word)
+      negation_word <- tolower(word)
 
       if(negation_word %in% self$negation_words) {
         self$negation_words <- self$negation_words[self$negation_words != negation_word]
@@ -78,8 +75,8 @@ TweetAnalysis <- R6Class(
 
     # Stop words--------------------------------------------------------------
 
-    #' @field stop_words  Stop words that are irrelevant from analysis.
-    #' Dataset from tidytext.
+    #' @field stop_words  A tibble of stop words that are irrelevant from
+    #' analysis. Dataset from tidytext is passed, during initialize.
     stop_words = NULL,
 
     #' @description
@@ -124,8 +121,17 @@ TweetAnalysis <- R6Class(
     # Conduct analysis----------------------------------------------------------
 
     #' @description
-    #' Conduct sentiment analysis on self$data, using self$lexicons,
-    #' self$stop_words and self$negation_words.
+    #' Conduct sentiment analysis. It calls `conduct_analysis` using arguments:
+    #' \itemize{
+    #'   \item{self$data}
+    #'   \item{self$lexicons}
+    #'   \item{self$stop_words}
+    #'   \item{self$negation_words}
+    #'   \item{self$adjust_negation}
+    #' }
+    #' Which returns a list of tibbles. This list is fed to
+    #' `produce_analysis_output` to produce final outputs, and are saved into
+    #' `self$analysis_result`
     analyze = function() {
       if(is.null(self$data)) {
         stop("No tweets pulled yet!")
@@ -136,7 +142,7 @@ TweetAnalysis <- R6Class(
         invisible(self)
       }
       else {
-        analysis_outputs <- tokenize_tweets(
+        sentiment_dfs <- conduct_analysis(
           tweets = self$data,
           lexicons = self$lexicons,
           stop_words = self$stop_words,
@@ -144,9 +150,7 @@ TweetAnalysis <- R6Class(
           adjust_negation = self$adjust_negation
         )
 
-        return(analysis_outputs)
-
-        # or I can take the list of outputs, and plug them into a R6 field!
+        produce_analysis_output(sentiment_dfs)
       }
     },
 
@@ -154,9 +158,14 @@ TweetAnalysis <- R6Class(
     #' contain the result of text analysis, performed by self$analyze()
     analysis_result = NULL,
 
-
     #' @description
-    #' Prints out key information about the analysis.
+    #' Prints out key information about the analysis, as a vector of characters
+    #' including html br tag.
+    #' \itemize{
+    #'   \item{# of tweets}
+    #'   \item{Overall sentiment}
+    #'   \item{Average sentiment per tweet}
+    #' }
     print_analysis = function() {
 
       total_tweets <- paste("# of tweets:", nrow(self$data))
@@ -165,17 +174,12 @@ TweetAnalysis <- R6Class(
 
       paste0(total_tweets, '<br>', sent_sum, '<br>', sent_avg)
     },
-    #' @param word Stop word
     # Initialize ---------------------------------------------------------------
 
     #' @description
-    #' Pass in the stop_words internal data.
+    #' Generate a new class. It requires the stop_words internal data.
     #'
-    #' @param stop_words stop_words internal data that is available in
-    #' R/sysdata.rda. I don't know why I need to initialize this, and
-    #' simply doing stop_words = stop_words don't work?
-    #'
-    #'
+    #' @param stop_words stop_words internal data.
     initialize = function(stop_words) {
       stopifnot(is.data.frame(stop_words))
 

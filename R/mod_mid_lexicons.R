@@ -4,6 +4,14 @@
 #' to be used for sentiment analysis. Everytime the lexicon is changed,
 #' it directly edits the `lexicons` field in R6 right away, without trigger.
 #'
+#' Currently it supports 3 lexicons + user-uploaded csv file
+#' \itemize{
+#'   \item{AFINN}
+#'   \item{Bing}
+#'   \item{nrc}
+#'   \item{User-uploaded csv:} {a dataframe with column names "word" & "value"}
+#' }
+#'
 #' @rdname mod_mid_lexicons
 #' @param id The Module namespace
 #'
@@ -45,10 +53,10 @@ mod_mid_lexicons_ui <- function(id){
 
 #' @rdname mod_mid_lexicons
 #' @param ta TweetAnalysis object, to hold analysis process in R6.
-#'
-#' @importFrom shiny moduleServer reactiveVal observeEvent
+#' @importFrom shiny moduleServer reactiveVal observeEvent updateRadioButtons
 #' @importFrom DT datatable renderDT
 #' @importFrom shinyjs enable disable
+#' @importFrom shinyalert shinyalert
 #' @importFrom readr read_csv
 mod_mid_lexicons_server <- function(id, ta){
   moduleServer( id, function(input, output, session){
@@ -74,11 +82,22 @@ mod_mid_lexicons_server <- function(id, ta){
       tryCatch({
         req(!is.null(input$file_upload))
         lexicons <- read_csv(input$file_upload$datapath)
+
+        # If custom files have wrong names, reset.
+        if(names(lexicons) != c("word", "value")) {
+          updateRadioButtons(inputId = "lexicon", selected = "AFINN")
+          stop("Column names must be 'word' & 'value'")
+        }
+
         ta$lexicons <- lexicons
         trigger("preview")
       },
       error = function(e) {
-        stop(e)
+        shinyalert(
+          e$message,
+          type = "error",
+          inputId = "shinyalert_failed_1"
+        )
       })
     })
 
