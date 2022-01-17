@@ -24,7 +24,7 @@ test_that("pull_tweets user query returns tweets data", {
   # pretty_tweets works
   df <- pretty_tweets(df)
   expect_true(nrow(df) == 10)
-  expect_equal(names(df), c("Picture", "User", "Date", "Text"))
+  expect_equal(names(df), c("Picture", "User", "Date", "ID", "Text"))
 
 })
 

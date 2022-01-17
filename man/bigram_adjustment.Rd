@@ -4,12 +4,12 @@
 \alias{bigram_adjustment}
 \title{Bigram negation adjustment}
 \usage{
-bigram_adjustment(lexicons, text_stripped, negation_words, stop_words)
+bigram_adjustment(lexicons, tweets_by_id, negation_words, stop_words)
 }
 \arguments{
 \item{lexicons}{Lexicons to use, A named list of tibbles.}
 
-\item{text_stripped}{Texts of tweets, processed in \code{produce_analysis_df}}
+\item{tweets_by_id}{Texts of tweets, processed in \code{produce_analysis_df}}
 
 \item{negation_words}{Negation words to use from TweetAnalysis R6 class.
 A character vector.}

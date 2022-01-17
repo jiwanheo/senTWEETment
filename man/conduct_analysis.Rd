@@ -21,9 +21,8 @@ A tibble.}
 adjustment.}
 }
 \description{
-A function to conduct the text sentiment analysis. It first strips the text
-column of the HTML tags. Then, it tokenizes the texts with by 1 word, and
-weed out stop words. This tokenized tibble is \code{inner_join}'d with the
-lexicons to get the final score. If \code{adjust_negation} is "yes", then the
-bigram negation adjustment will be performed.
+A function to conduct the text sentiment analysis. It first tokenizes the
+texts with by 1 word, and weed out stop words. This tokenized tibble is
+\code{inner_join}'d with the lexicons to get the final score. If \code{adjust_negation}
+is "yes", then the bigram negation adjustment will be performed.
 }

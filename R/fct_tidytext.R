@@ -56,11 +56,10 @@ process_lexicons <- function() {
 
 #' Conduct Analysis
 #'
-#' A function to conduct the text sentiment analysis. It first strips the text
-#' column of the HTML tags. Then, it tokenizes the texts with by 1 word, and
-#' weed out stop words. This tokenized tibble is `inner_join`'d with the
-#' lexicons to get the final score. If `adjust_negation` is "yes", then the
-#' bigram negation adjustment will be performed.
+#' A function to conduct the text sentiment analysis. It first tokenizes the
+#' texts with by 1 word, and weed out stop words. This tokenized tibble is
+#' `inner_join`'d with the lexicons to get the final score. If `adjust_negation`
+#' is "yes", then the bigram negation adjustment will be performed.
 #'
 #' @param tweets Tweets to analyze. A tibble.
 #' @param lexicons Lexicons to use, A named list of tibbles.
@@ -70,7 +69,7 @@ process_lexicons <- function() {
 #' A tibble.
 #' @param adjust_negation Boolean indicating whether or not to use bigram
 #' adjustment.
-#' @importFrom dplyr row_number mutate select filter inner_join group_by summarize
+#' @importFrom dplyr mutate select filter inner_join group_by summarize
 #' @importFrom magrittr %>%
 #' @importFrom tidytext unnest_tokens
 #' @importFrom rlang .data
@@ -80,17 +79,10 @@ conduct_analysis <- function(tweets,
                              negation_words,
                              adjust_negation) {
 
-  # `row_num` is used as a join column between original tweets and tokens.
-  tweets <- tweets %>%
-    mutate(row_num = row_number())
+  tweets_by_id <- tweets %>%
+    select(-c(.data$Picture, .data$User, .data$Date))
 
-  # Strip the html tags
-  text_stripped <- tweets %>%
-    select(-c(.data$Picture, .data$User, .data$Date)) %>%
-    mutate(Text = gsub('^<a.*">', "", .data$Text),
-           Text = gsub("</a>", "", .data$Text))
-
-  tokenized <- text_stripped %>%
+  tokenized <- tweets_by_id %>%
     unnest_tokens(.data$word, .data$Text, token = "tweets")
 
   # token must not be a stop word
@@ -104,12 +96,12 @@ conduct_analysis <- function(tweets,
   # Bi-gram adjustment ----
 
   if(adjust_negation == "yes") {
-    negated_words <- bigram_adjustment(lexicons, text_stripped, negation_words, stop_words)
+    negated_words <- bigram_adjustment(lexicons, tweets_by_id, negation_words, stop_words)
 
     # Tally up the unigram sentiments with bigram sentiments.
     sentimented <- sentimented %>%
       rbind(negated_words) %>%
-      group_by(.data$row_num, .data$word) %>%
+      group_by(.data$ID, .data$word) %>%
       summarize(value = sum(.data$value), .groups = "drop") %>%
       filter(.data$value != 0)
   }
@@ -137,7 +129,7 @@ conduct_analysis <- function(tweets,
 #' sentiment. Since we are specifically looking only for the negative words,
 #' stop words will exclude negation words.
 #' @param lexicons Lexicons to use, A named list of tibbles.
-#' @param text_stripped Texts of tweets, processed in `produce_analysis_df`
+#' @param tweets_by_id Texts of tweets, processed in `produce_analysis_df`
 #' @param negation_words Negation words to use from TweetAnalysis R6 class.
 #' A character vector.
 #' @param stop_words Stop words to use from TweetAnalysis R6 class. A tibble.
@@ -149,28 +141,28 @@ conduct_analysis <- function(tweets,
 #' @importFrom purrr imap_dfr pmap_dfr
 #' @importFrom rlang .data
 
-bigram_adjustment <- function(lexicons, text_stripped, negation_words, stop_words) {
+bigram_adjustment <- function(lexicons, tweets_by_id, negation_words, stop_words) {
 
   stop_words <- stop_words %>%
     filter(!.data$word %in% negation_words)
 
   # unigrams, stripped of stop words
-  unigrams <- text_stripped %>%
+  unigrams <- tweets_by_id %>%
     unnest_tokens(.data$word, .data$Text) %>%
     filter_stop_words(stop_words)
 
   # Make bigrams out of the above unigrams.
 
   bigrams <- imap_dfr(unigrams$word, function(x, y) {
-    curr_rownum <- unigrams[[y, "row_num"]]
+    curr_row_ID <- unigrams[[y, "ID"]]
 
     if(y == nrow(unigrams)) {
       # Reached the end of unigrams df
       NULL
     }
-    else if(curr_rownum == unigrams[[y+1, "row_num"]]) {
+    else if(curr_row_ID == unigrams[[y+1, "ID"]]) {
       tibble::tibble(
-        row_num = curr_rownum,
+        ID = curr_row_ID,
         word = paste(unigrams[[y, "word"]], unigrams[[y+1, "word"]])
       )
     }
@@ -185,8 +177,8 @@ bigram_adjustment <- function(lexicons, text_stripped, negation_words, stop_word
     filter(.data$word1 %in% negation_words) %>%
     inner_join(lexicons, by = c("word2" = "word")) %>%
     mutate(word1 = paste(.data$word1, .data$word2)) %>%
-    pmap_dfr(function(row_num, word1, word2, value){
-      data.frame(row_num = row_num,
+    pmap_dfr(function(ID, word1, word2, value){
+      data.frame(ID = ID,
                  word = c(word1, word2),
                  value = c(-value, -value))
     })
@@ -208,19 +200,18 @@ bigram_adjustment <- function(lexicons, text_stripped, negation_words, stop_word
 produce_analysis_output <- function(dfs) {
 
   sentiment_by_tweet <- dfs$sentimented %>%
-    group_by(.data$row_num) %>%
+    group_by(.data$ID) %>%
     summarize(Sentiment = sum(.data$value), .groups = "drop")
 
   all_tweets_scored <- dfs$tweets %>%
-    left_join(sentiment_by_tweet, by = "row_num") %>%
-    mutate(Sentiment = ifelse(is.na(.data$Sentiment), 0, .data$Sentiment)) %>%
-    select(-.data$row_num)
+    left_join(sentiment_by_tweet, by = "ID") %>%
+    mutate(Sentiment = ifelse(is.na(.data$Sentiment), 0, .data$Sentiment))
 
   all_words_scored <- dfs$tweets %>%
-    left_join(dfs$sentimented, by = "row_num") %>%
+    left_join(dfs$sentimented, by = "ID") %>%
     mutate(value = ifelse(is.na(.data$value), 0, .data$value)) %>%
-    select(-c(.data$row_num, .data$User, .data$Date, .data$Text))
-  names(all_words_scored) <- c("Picture", "Word", "Sentiment")
+    select(-c(.data$User, .data$Date, .data$Text))
+  names(all_words_scored) <- c("Picture", "ID", "Word", "Sentiment")
 
   overall_scores <- all_tweets_scored %>%
     summarize(sentiment_sum = sum(.data$Sentiment),
@@ -237,8 +228,7 @@ produce_analysis_output <- function(dfs) {
     mutate(is_positive = .data$Sentiment > 0) %>%
     ggplot(aes(.data$Sentiment, .data$word, fill = .data$is_positive)) +
     geom_col(show.legend = FALSE) +
-    labs(title = "Top 20 words with most impact on sentiment",
-         y = "")
+    labs(y = "")
 
   list(
     sentiment_by_tweet = sentiment_by_tweet,

@@ -39,7 +39,8 @@ test_that("R6 works", {
     Picture = '<a href=\"https://twitter.com/jiwanheo\" target=_blank><img class=\"profile-table-img\" src=https://pbs.twimg.com/profile_images/1387996217959985156/1N4AcdFH_normal.jpg></img></a>',
     User = '@jiwanheo',
     Date = '2022-01-14 02:09:26 UTC',
-    Text = '<a href=\"https://twitter.com/jiwanheo/status/1481810657817374720\">Testing not that bad sentiment analysis. @dontshowup https://thisshouldntshow #thisshouldshow</a>'
+    ID = '<a href=\"https://twitter.com/jiwanheo/status/1481810657817374720\">1481810657817374720</a>',
+    Text = 'Testing not that bad sentiment analysis. @dontshowup https://thisshouldntshow #thisshouldshow'
   )
   ta$data <- tweets
   expect_true(!is.null(ta$data))

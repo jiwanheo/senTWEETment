@@ -118,8 +118,7 @@ pretty_tweets <- function(tweets) {
       screen_name = screen_name,
       profile_image = profile_image,
       user_url = paste0("https://twitter.com/", .data$screen_name),
-      tweet_url = paste0(.data$user_url, "/status/", .data$id_str),
-      created_at =
+      tweet_url = paste0(.data$user_url, "/status/", .data$id_str)
     ) %>%
     transmute(
       profile_image = sprintf('<a href="%s" target=_blank><img class="profile-table-img" src=%s></img></a>',
@@ -132,12 +131,14 @@ pretty_tweets <- function(tweets) {
         as.character(strptime(gsub("\\+0000\\s", "", .data$created_at),
                               format = "%a %b %d %H:%M:%S %Y")),
         "UTC"),
-      text = sprintf('<a href="%s">%s</a>',
-                     .data$tweet_url,
-                     .data$text)
+      id = sprintf('<a href="%s">%s</a>',
+                   .data$tweet_url,
+                   .data$id),
+      text
+
     )
 
-  names(processed) <- c("Picture", "User", "Date", "Text")
+  names(processed) <- c("Picture", "User", "Date", "ID", "Text")
 
   processed
 
