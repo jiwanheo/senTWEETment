@@ -27,9 +27,10 @@ mod_mid_lexicons_ui <- function(id){
 
       col_12(
         col_6(
+          tags$h3("Choose Lexicon (Unigram)"),
           radioButtons(
             ns("lexicon"),
-            "Choose Lexicon",
+            "",
             choices = c("AFINN", "Bing", "NRC", "Upload my own"),
             selected = "AFINN"
           ),
@@ -44,6 +45,7 @@ mod_mid_lexicons_ui <- function(id){
           )
         ),
         col_6(
+          tags$h3("Preview"),
           DTOutput(ns("lexicon_preview"))
         )
       )

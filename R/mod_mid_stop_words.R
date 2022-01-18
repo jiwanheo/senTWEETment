@@ -13,7 +13,7 @@ mod_mid_stop_words_ui <- function(id){
 
   box(
     width = 6,
-    title = "Custom stop words (Optional)",
+    title = "Stop words",
     status = "primary",
     solidHeader = TRUE,
     collapsible = TRUE,

@@ -91,7 +91,7 @@ conduct_analysis <- function(tweets,
 
   # INNER join with lexicons
   sentimented <- tokenized_stopped %>%
-    inner_join(lexicons, by = "word") # I have to find a way to do this with all the lexicons
+    inner_join(lexicons, by = "word")
 
   # Bi-gram adjustment ----
 
@@ -143,6 +143,7 @@ conduct_analysis <- function(tweets,
 
 bigram_adjustment <- function(lexicons, tweets_by_id, negation_words, stop_words) {
 
+  # There are lots of words in stop_words that shouldn't be stop words
   stop_words <- stop_words %>%
     filter(!.data$word %in% negation_words)
 
@@ -214,16 +215,15 @@ produce_analysis_output <- function(dfs) {
   names(all_words_scored) <- c("Picture", "ID", "Word", "Sentiment")
 
   overall_scores <- all_tweets_scored %>%
-    summarize(sentiment_sum = sum(.data$Sentiment),
+    summarize(sentiment_n = nrow(.),
+              sentiment_sum = sum(.data$Sentiment),
               sentiment_avg = round(mean(.data$Sentiment), digits = 2)) %>%
-    mutate(sentiment_sum = ifelse(.data$sentiment_sum < 0, .data$sentiment_sum, paste0("+", .data$sentiment_sum)),
-           sentiment_avg = ifelse(.data$sentiment_avg < 0, .data$sentiment_avg, paste0("+", .data$sentiment_avg))) %>%
     as.list()
 
   word_plot <- dfs$sentimented %>%
     group_by(.data$word) %>%
     summarize(Sentiment = sum(.data$value)) %>%
-    slice_max(abs(.data$Sentiment), n = 20) %>%
+    slice_max(abs(.data$Sentiment), n = 10) %>%
     mutate(word = fct_reorder(.data$word, .data$Sentiment)) %>%
     mutate(is_positive = .data$Sentiment > 0) %>%
     ggplot(aes(.data$Sentiment, .data$word, fill = .data$is_positive)) +

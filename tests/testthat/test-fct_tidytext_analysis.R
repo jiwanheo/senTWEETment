@@ -47,7 +47,10 @@ test_that("conduct_analysis works", {
   expect_true(nrow(dfs$tweets) == nrow(outputs$sentiment_by_tweet))
   expect_true(nrow(dfs$tweets) == nrow(outputs$all_tweets_scored))
   expect_true(nrow(dfs$tweets) <= nrow(outputs$all_words_scored))
-  expect_equal(outputs$overall_scores$sentiment_sum, "+3")
-  expect_equal(outputs$overall_scores$sentiment_avg, "+3")
+
+  expect_equal(outputs$overall_scores$sentiment_n, 1)
+  expect_equal(outputs$overall_scores$sentiment_sum, 3)
+  expect_equal(outputs$overall_scores$sentiment_avg, 3)
+
   expect_s3_class(outputs$word_plot, "ggplot")
 })

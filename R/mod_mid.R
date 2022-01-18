@@ -18,25 +18,22 @@
 mod_mid_ui <- function(id){
   ns <- NS(id)
   tagList(
-    box(width = 12,
-        title = "Step 2: Customize Analysis",
-        status = "primary",
-        solidHeader = TRUE,
-        collapsible = TRUE,
-        collapsed = TRUE,
+    box(
+      width = 12,
+      title = "Step 2: Customize Analysis",
+      status = "primary",
+      solidHeader = TRUE,
+      collapsible = TRUE,
+      collapsed = TRUE,
 
-        col_12(
-          tags$p(HTML("This lexicon-based sentiment analysis follows methods suggested in <a href='https://www.tidytextmining.com/index.html'>Text Mining with R</a>."))
-        ),
+      mod_mid_lexicons_ui(ns("mid_lexicons_1")),
+      mod_mid_negation_words_ui(ns("mid_negation_words_1")),
+      mod_mid_stop_words_ui(ns("mid_stop_words_1")),
 
-        mod_mid_lexicons_ui(ns("mid_lexicons_1")),
-        mod_mid_negation_words_ui(ns("mid_negation_words_1")),
-        mod_mid_stop_words_ui(ns("mid_stop_words_1")),
-
-        col_12(
-          class = "text-center",
-          actionButton(ns("analyze"),"Analyze!")
-        )
+      col_12(
+        class = "text-center",
+        actionButton(ns("analyze"),"Analyze!")
+      )
     )
   )
 }
@@ -78,6 +75,8 @@ mod_mid_server <- function(id, ta){
         )
       },
       error = function(e) {
+        waiter_hide()
+
         shinyalert(
           title = e$message,
           type = "error",

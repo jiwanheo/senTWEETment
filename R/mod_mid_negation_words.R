@@ -15,15 +15,14 @@ mod_mid_negation_words_ui <- function(id){
 
   box(
     width = 6,
-    title = "Negation adjustment (Default Yes)",
+    title = "Negation adjustment",
     status = "primary",
     solidHeader = TRUE,
     collapsible = TRUE,
     collapsed = TRUE,
 
     tagList(
-      tags$p(HTML("Look for bigrams that start with a negative word. If the second word has a sentiment as a unigram, reverse the effect, and add the sentiment of the bigram. <br>
-                    For example, in a unigram analysis, the sentence 'I am <strong>not</strong> happy' returns a positive sentiment. The adjustment cancels out the positive sentiment of 'happy', and add the negative sentiment of 'not happy'. <br>")),
+      tags$p(HTML("Any word that comes right after a negation word gets its sentiment reversed. <br>('I am <strong>not</strong> happy', 'Weather is <strong>never</strong> bad here')")),
       tags$br(),
 
       radioButtons(

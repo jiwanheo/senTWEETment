@@ -8,45 +8,98 @@
 #' @param id The Module namespace
 #' @rdname mod_bot
 #' @importFrom shiny NS tagList textOutput plotOutput htmlOutput
-#' @importFrom shinydashboard box
+#' @importFrom shinydashboard box infoBoxOutput
 #' @importFrom DT DTOutput
 mod_bot_ui <- function(id){
   ns <- NS(id)
   tagList(
     box(
       width = 12,
-      title = "Step 3: Analysis Result & Export",
+      title = "Step 3: Analysis Result",
       status = "primary",
       solidHeader = TRUE,
       collapsible = TRUE,
       collapsed = TRUE,
 
       col_12(
-        htmlOutput(ns("output_summary")),
+        tags$h3("Summary"),
+        infoBoxOutput(ns("n_tweets")),
+        infoBoxOutput(ns("overall_sentiment")),
+        infoBoxOutput(ns("avg_sentiment"))
+      ),
+      col_12(
+        tags$h3("Top 10 most impactful words"),
         plotOutput(ns("output_plot"))
       ),
       col_12(
+        tags$h3("Sentiment by tweet"),
         DTOutput(ns("output_data")),
+      ),
+      col_12(
+        tags$h3("Sentiment by word"),
         DTOutput(ns("output_data2"))
       )
-    )
+    ) %>% tagAppendAttributes(class = "main-step")
   )
 }
 
 #' @rdname mod_bot
 #' @param ta TweetAnalysis object, to hold analysis process in R6.
 #' @importFrom shiny moduleServer renderText renderPlot
+#' @importFrom shinydashboard renderInfoBox infoBox
 #' @importFrom DT datatable renderDT formatStyle styleInterval
 mod_bot_server <- function(id, ta){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    output$output_summary <- renderText({
-
+    output$n_tweets <- renderInfoBox({
       watch("analyze-tweets")
-      req(!is.null(ta$analysis_result$overall_scores))
+      req(!is.null(ta$analysis_result$overall_scores$sentiment_n))
 
-      ta$print_analysis()
+      infoBox(
+        "# Tweets",
+        ta$analysis_result$overall_scores$sentiment_n,
+        icon = shiny::icon("twitter")
+      )
+    })
+
+    output$overall_sentiment <- renderInfoBox({
+      watch("analyze-tweets")
+      req(!is.null(ta$analysis_result$overall_scores$sentiment_sum))
+
+      icon <- ifelse(ta$analysis_result$overall_scores$sentiment_sum < 0,
+                     "frown",
+                     "smile")
+      clr <- ifelse(ta$analysis_result$overall_scores$sentiment_sum < 0,
+                    "red",
+                    "green")
+
+      infoBox(
+        "Total Sentiment",
+        ta$analysis_result$overall_scores$sentiment_sum,
+        icon = shiny::icon(icon),
+        color = clr
+      )
+    })
+
+    output$avg_sentiment <- renderInfoBox({
+      watch("analyze-tweets")
+      req(!is.null(ta$analysis_result$overall_scores$sentiment_avg))
+
+      icon <- ifelse(ta$analysis_result$overall_scores$sentiment_avg < 0,
+                     "frown",
+                     "smile")
+
+      clr <- ifelse(ta$analysis_result$overall_scores$sentiment_avg < 0,
+                    "red",
+                    "green")
+
+      infoBox(
+        "Avg. Sentiment",
+        ta$analysis_result$overall_scores$sentiment_avg,
+        icon = shiny::icon(icon),
+        color = clr
+      )
     })
 
     output$output_plot <- renderPlot({
