@@ -134,7 +134,7 @@ pretty_tweets <- function(tweets) {
       id = sprintf('<a href="%s">%s</a>',
                    .data$tweet_url,
                    .data$id),
-      text
+      text = .data$text
 
     )
 

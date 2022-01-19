@@ -86,7 +86,7 @@ mod_mid_lexicons_server <- function(id, ta){
         lexicons <- read_csv(input$file_upload$datapath)
 
         # If custom files have wrong names, reset.
-        if(names(lexicons) != c("word", "value")) {
+        if(!identical(names(lexicons), c("word", "value"))) {
           updateRadioButtons(inputId = "lexicon", selected = "AFINN")
           stop("Column names must be 'word' & 'value'")
         }

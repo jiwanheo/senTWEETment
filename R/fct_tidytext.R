@@ -215,7 +215,7 @@ produce_analysis_output <- function(dfs) {
   names(all_words_scored) <- c("Picture", "ID", "Word", "Sentiment")
 
   overall_scores <- all_tweets_scored %>%
-    summarize(sentiment_n = nrow(.),
+    summarize(sentiment_n = nrow(all_tweets_scored),
               sentiment_sum = sum(.data$Sentiment),
               sentiment_avg = round(mean(.data$Sentiment), digits = 2)) %>%
     as.list()
