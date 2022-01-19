@@ -81,7 +81,10 @@ tokenized_stopped
 This is then inner joined with the lexicon
 
 ```{r echo = FALSE}
-lexicons <- textdata::lexicon_afinn()
+lexicons <- tibble::tibble(
+  word = c("damage", "disaster"),
+  value = c(-3, -2)
+)
 
 sentimented <- tokenized_stopped %>%
   dplyr::inner_join(lexicons, by = "word")
