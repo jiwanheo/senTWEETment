@@ -43,3 +43,4 @@ BugReports: https://github.com/jiwanheo/senTWEETment/issues
 VignetteBuilder: knitr
 Depends: 
     R (>= 2.10)
+Remotes: ropensci/rtweet
