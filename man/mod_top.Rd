@@ -7,15 +7,17 @@
 \usage{
 mod_top_ui(id)
 
-mod_top_server(id)
+mod_top_server(id, ta)
 }
 \arguments{
 \item{id}{The Module namespace}
+
+\item{ta}{TweetAnalysis object, to hold analysis process in R6.}
 }
 \description{
 A shiny Module that contains the first step of the app,
 namely the various ways to pull in tweets. Users must specifty 1 of 4 ways
 to filter tweets, and hit "Pull Tweets!" button, which will pull in tweets
-and display as a table. Once table is loaded, the users can move on to
-the second step.
+and display as a table. Once table is loaded, it is saved as the R6 object's
+\code{data}field.
 }

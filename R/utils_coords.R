@@ -1,12 +1,11 @@
 #' Look up coords with nominatim
 #'
-#' @description A workaround to rtweet::lookup_coord requiring google API.
-#' We use the nominatim API instead, with USA/world bounding box hardcoded.
+#' A workaround to rtweet::lookup_coord requiring google API. We use the
+#' nominatim API instead, with USA/world bounding box hardcoded.
 #'
 #' @param address Place to lookup on nominatim API.
-#' @param ... Any further arguments to the API call. Currently unused
 #' @importFrom jsonlite fromJSON
-lookup_coords_nominatim <- function(address, ...) {
+lookup_coords_nominatim <- function(address) {
   if (missing(address)) stop("must supply address", call. = FALSE)
   stopifnot(is.atomic(address))
   place <- address

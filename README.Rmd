@@ -19,22 +19,9 @@ knitr::opts_chunk$set(
 
 # senTWEETment <img src="inst/app/www/hex.png" align="right" width="120"/>
 
-senTWEETment is a shiny app that helps you extract and conduct sentiment analysis on tweets. It is distributed as an R package using the [golem](https://thinkr-open.github.io/golem/) framework.
+Inspired heavily by [Text Mining with R](https://www.tidytextmining.com/), senTWEETment is a shiny app that helps you extract and conduct lexicon-based sentiment analysis on tweets in English. It is distributed as an R package using the [golem](https://thinkr-open.github.io/golem/) framework.
 
-You can pull tweets in 1 of 3 ways:
-
-- Search word (#hashtag or any other text)
-- User name
-- Location (requires google maps API)
-- *Search word + Location: tbd* 
-
-This tool utilizes the text sentiment analysis process introduced in the book [Text Mining with R](https://www.tidytextmining.com/). It currently supports 3 lexicons:
-
-- AFINN
-- Bing
-- NRC
-
-The design specification of this app can be found in the "design-spec" vignette (per engineering Shiny book)
+The design specification of this app can be found in the [design spec vignette](vignettes/design-spec.Rmd) (per engineering Shiny book)
 
 ## Installation
 
@@ -43,26 +30,74 @@ You can install the latest version of senTWEETment from github with:
 ```{r eval=FALSE}
 install.packages("remotes")
 remotes::install_github("jiwanheo/senTWEETment")
-
-# with vignettes
-remotes::install_github("jiwanheo/senTWEETment", build_vignettes = TRUE)
 ```
+
+## Setup - lexicons
+
+senTWEETment currently supports 3 pre-set lexicons libraries from [textdata](https://github.com/EmilHvitfeldt/textdata).(AFINN, Bing, NRC). To use them, users must explicitly agree to conditions to downloading/using these lexicons before launching the app for the first time. To do this, run in your console:
+
+```{r eval=FALSE}
+senTWEETment::get_lexicons()
+```
+
+## Setup - Twitter API
+
+The first time you launch senTWEETment, you'll be prompted to provide a bearer token of your Twitter API app. Setting up the authorization can be found in the [auth vignette](vignettes/auth.Rmd).
+
+![](vignettes/cred-modal.PNG){width="548"}
 
 ## Usage
 
-To run the application from your local computer simply run:
+To run the application from your local computer, run:
 
 ```{r eval=FALSE}
 senTWEETment::run_app()
 ```
 
-First, you'll need a Twitter API app. Setting up and authorization can be found in the auth vignette.
+The app follows 3 straightforward steps that lead up to a text analysis output.
 
-```{r eval=FALSE}
-# vignette("auth")
-```
+![](inst/img/overview.PNG){width="548"}
 
+### Step 1. Pull Tweets
 
-## Progress
+![](inst/img/pull-tweets.gif){width="548"}
 
-![Progress](inst/img/progress.gif)
+On the left hand side, there are 3 inputs that you can search tweets with in one of 4 ways:
+
+- Hashtag or text
+- Location
+- User
+- Hashtag or text AND Location
+
+Any input combinations outside these 4 are automatically disabled.
+
+After choosing a method, you can provide further search options on the right hand side.
+
+- Number of tweets is not guaranteed (tweets may have been deleted, modified, ...)
+- Include Retweets is defaulted to "Yes", on user search.
+- Pull By is defaulted to "Recent" on user search.
+
+Press "Pull Tweets" to retrieve the tweets in a DT table with links to user profiles and tweets.
+
+### Step 2. Customize Analysis
+
+![](inst/img/customize-analysis.gif){width="548"}
+
+In this step, you can specify which lexicons you'll use for the analysis. You can choose between the 3 pre-set lexicons, or upload your own file.
+
+You can also edit the list of negation words and stop words used in this analysis. Further explanation in the [analysis vignette](vignettes/analysis.Rmd).
+
+Once you're happy with the settings of the analysis, press "Analyze!" to run the sentiment analysis.
+
+### Step 3. Analysis Result
+
+The resulting analysis shows
+
+- A summary of tallied-up/per-tweet sentiment
+- Top 10 words with most impacts on analysis
+- Original Tweets and their sentiments
+- Contributing sentiment per word per tweet. (If blank, the tweet didn't have any words with sentiments in the lexicon)
+
+![](inst/img/result-1.PNG){width="548"}
+![](inst/img/result-2.PNG){width="548"}
+![](inst/img/result-3.PNG){width="548"}

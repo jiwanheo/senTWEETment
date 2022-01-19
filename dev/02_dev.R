@@ -18,16 +18,24 @@
 golem::add_module(name = "header") # Name of the module
 golem::add_module(name = "main") # Name of the module
 golem::add_module(name = "top") # Name of the module
+
 golem::add_module(name = "mid") # Name of the module
+golem::add_module(name = "mid_lexicons") # Name of the module
+golem::add_module(name = "mid_stop_words") # Name of the module
+golem::add_module(name = "mid_negation_words") # Name of the module
+
 golem::add_module(name = "bot") # Name of the module
 golem::add_module(name = "creds_modal") # Name of the module
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*
 golem::add_fct("twitter")
+golem::add_fct("analysis")
+golem::add_fct("R6")
 golem::add_utils("trigger")
 golem::add_utils("coords")
-golem::add_utils("pipe")
+golem::add_utils("tidytext")
+golem::add_utils("tryCatch_alert")
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
@@ -42,7 +50,12 @@ usethis::use_data_raw(name = "my_dataset", open = FALSE)
 
 ## Tests ----
 ## Add one line by test you want to create
-usethis::use_test("app")
+usethis::use_test("fct_twitter")
+usethis::use_test("lookup_coords_nominatim")
+usethis::use_test("mod_mid")
+usethis::use_test("fct_tidytext_lexicons")
+usethis::use_test("fct_tidytext_analysis")
+usethis::use_test("R6")
 
 # Documentation
 
@@ -50,6 +63,7 @@ usethis::use_test("app")
 usethis::use_vignette("design-spec", "Design Specification")
 usethis::use_vignette("auth", "Authentication with senTWEETment")
 usethis::use_vignette("search-tweets", "How to search Tweets")
+usethis::use_vignette("analysis", "Conducting sentiment analysis")
 devtools::build_vignettes()
 
 ## Code Coverage----

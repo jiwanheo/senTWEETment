@@ -4,14 +4,12 @@
 \alias{lookup_coords_nominatim}
 \title{Look up coords with nominatim}
 \usage{
-lookup_coords_nominatim(address, ...)
+lookup_coords_nominatim(address)
 }
 \arguments{
 \item{address}{Place to lookup on nominatim API.}
-
-\item{...}{Any further arguments to the API call. Currently unused}
 }
 \description{
-A workaround to rtweet::lookup_coord requiring google API.
-We use the nominatim API instead, with USA/world bounding box hardcoded.
+A workaround to rtweet::lookup_coord requiring google API. We use the
+nominatim API instead, with USA/world bounding box hardcoded.
 }
