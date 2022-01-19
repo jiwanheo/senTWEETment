@@ -12,11 +12,13 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 Inspired heavily by [Text Mining with
 R](https://www.tidytextmining.com/), senTWEETment is a shiny app that
 helps you extract and conduct lexicon-based sentiment analysis on tweets
-in English. It is distributed as an R package using the
-[golem](https://thinkr-open.github.io/golem/) framework.
+in English. The design specification can be found in the [design spec
+vignette](vignettes/design-spec.Rmd).
 
-The design specification of this app can be found in the [design spec
-vignette](vignettes/design-spec.Rmd) (per engineering Shiny book)
+This app is distributed as an R package under the
+[golem](https://thinkr-open.github.io/golem/) framework. Under the hood,
+the main business logics are held in an R6 class, allowing for
+communications between modules.
 
 ## Installation
 

@@ -2,7 +2,7 @@ Package: senTWEETment
 Title: Analyze Twitter Sentiment
 Version: 0.0.0.9000
 Authors@R: person('Jiwan', 'Heo', email = 'jiwanheo123@gmail.com', role = c('cre', 'aut'))
-Description: A Shiny app to pull in and conduct text sentiment analysis on tweets, using Twitter Developer API. Users of this app can easily customize the analysis, without coding.
+Description: A Shiny app to conduct lexicon-based text sentiment analysis on tweets written in English.
 License: MIT + file LICENSE
 Imports: 
     config (>= 0.3.1),
@@ -10,7 +10,7 @@ Imports:
     DT,
     forcats,
     ggplot2,
-    golem (>= 0.3.1.9003),
+    golem,
     jsonlite,
     magrittr,
     purrr,
