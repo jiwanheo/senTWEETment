@@ -38,7 +38,7 @@ mod_main_server <- function(id){
     ns <- session$ns
 
     output$img <- renderImage({
-      list(src = "inst/app/www/hex.png", height = "200px")
+      list(src = system.file("app/www/hex.png"), height = "200px")
     }, deleteFile = FALSE)
 
     ta <- TweetAnalysis$new(stop_words = stop_words)
