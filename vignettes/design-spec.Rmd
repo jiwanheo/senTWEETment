@@ -21,7 +21,6 @@ knitr::opts_chunk$set(
   - Hashtags
   - Locations
   - User ID
-  - Specific tweet ID
  
 - Conduct text sentiment analysis using various ranking methods. 
 - The results should be available for download.
@@ -34,7 +33,7 @@ knitr::opts_chunk$set(
 
 ## User experience considerations
 
-- Make it clear the need for API keys (Renvironment & Sys.get)
+- Make it clear the need for API keys (bearer token)
 
 - May need a link/resources explaining text sentiment methods
 

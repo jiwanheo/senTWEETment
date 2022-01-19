@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css?family=Archivo');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+body {
+  font-family: 'Open Sans';
+}
+
+/* Main container width media query */
+
+@media (min-width: 1200px)
+.container {
+  max-width: 1120px;
+  width: 80%;
+}
+
+@media (min-width: 992px)
+.container {
+  max-width: 960px;
+  width: 80%;
+}
+
+@media (min-width: 768px)
+.container {
+  width: 750px;
+}
+
+/* Main image at the top */
+#main_1-img {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-family: 'Archivo';
+}
+
+/* Step 1,2,3 making title bigger */
+
+.main-step > .box > .box-header .fa,
+.main-step > .box > .box-header .box-title {
+  font-size: 2.5rem;
+}
+
+/* mod_top & mod_bot: Round profile picture in DT */
+.profile-table-img {
+  border-radius: 50%;
+}
+
+/* mod_mid: Get rid of lexicon choice label */
+#main_1-mid_1-mid_lexicons_1-lexicon-label {
+  display: block;
+  margin-bottom: 2rem;
+}
+
+/* mod_mid: Some space between lexicon section and negation+stopword */
+.lexicon-section {
+  margin-bottom: 1rem;
+}
+
+/* mod_bot: infobox */
+.info-box-text {
+    text-transform: none;
+    font-family: 'Archivo';
+    font-size: 1.5rem;
+}
+.info-box-number {
+    font-size: 3.5rem;
+}

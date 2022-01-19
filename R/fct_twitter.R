@@ -1,68 +1,145 @@
-#' Retrieve Twiter API keys
-#'
-#' Retrieve Twitter API keys either from .Renviron file, or users
-#' can manually pass them into this function. If all 4 credentials are found,
-#' this function returns a named list containing the keys. If any are missing,
-#' this function returns a character vector containing the names of the missing
-#' keys.
-#'
-#' @param  app A Twitter API credential
-#' @param  api_key A Twitter API credential
-#' @param  api_key_secret A Twitter API credential
-#' @param  access_token A Twitter API credential
-#' @param  access_token_secret A Twitter API credential
-
-get_creds <- function(
-  app                 = NULL,
-  api_key             = NULL,
-  api_key_secret      = NULL,
-  access_token        = NULL,
-  access_token_secret = NULL
-) {
-
-  # If creds are not manually passed, get them from .Renviron
-  # if manually passed, just use them
-  if(is.null(app))                 {app                 <- Sys.getenv("TWITTER_APP")}
-  if(is.null(api_key))             {api_key             <- Sys.getenv("TWITTER_API_KEY")}
-  if(is.null(api_key_secret))      {api_key_secret      <- Sys.getenv("TWITTER_API_KEY_SECRET")}
-  if(is.null(access_token))        {access_token        <- Sys.getenv("TWITTER_ACCESS_TOKEN")}
-  if(is.null(access_token_secret)) {access_token_secret <- Sys.getenv("TWITTER_ACCESS_TOKEN_SECRET")}
-
-  creds <- list(app                 = app,
-                api_key             = api_key,
-                api_key_secret      = api_key_secret,
-                access_token        = access_token,
-                access_token_secret = access_token_secret)
-
-  # If creds aren't completely filled out, return a character vector with
-  # missing cred names. If found everything, return the named list containing creds.
-  if(any(creds == "")) {
-    unfilled_creds <- names(creds[creds == ""])
-    return(unfilled_creds)
-  }
-  else {
-    return(creds)
-  }
-}
-
 #' Connect to Twitter API
 #'
 #' Connect to Twitter API using the credentials provided.
 #'
-#' @param  creds_list A list of Twitter API credentials
-#' @importFrom rtweet create_token
-
-connect_to_api <- function(creds_list) {
+#' @param bearer_token User specific bearer token
+#' @param saved If TRUE, use the existing 'my-twitter-app' authentication. If
+#' FALSE, make one, and authenticate with it.
+#' @importFrom rtweet rtweet_app auth_save auth_as
+#' @importFrom shinyalert shinyalert
+connect_to_api <- function(bearer_token, saved = TRUE) {
   # throw an error if no creds are provided
-  stopifnot(!is.null(creds_list))
+  stopifnot(!is.null(bearer_token))
+  stopifnot(bearer_token != "")
 
-  # I should probably wrap this in trycatch, in case of wrong credentials
-  create_token(
-    app             = creds_list$app,
-    consumer_key    = creds_list$api_key,
-    consumer_secret = creds_list$api_key_secret,
-    access_token    = creds_list$access_token,
-    access_secret   = creds_list$access_token_secret,
-    set_renv = TRUE
-  )
+  if(saved) {
+    auth_as("my-twitter-app")
+  }
+  else {
+    auth <- rtweet_app(bearer_token)
+    auth_save(auth, "my-twitter-app")
+    auth_as("my-twitter-app")
+  }
+}
+
+#' Pull tweets
+#'
+#' Pull tweets using the parameters passed by the user.
+#'
+#' Users can pull tweets in 1 of 4 ways.
+#' \itemize{
+#'   \item{q: } {Just using search word}
+#'   \item{user:} {Just using user name}
+#'   \item{location:} {Just using location}
+#'   \item{q + location:} {Quering search word, from a location}
+#' }
+#'
+#' @param q Search text, or hashtag.
+#' @param user If provided, the user's timeline will be pulled
+#' @param location If provided on its own, tweets from the area will be pulled.
+#' It can be used with `q` argument, but not `user`
+#' @param n Number of tweets to pull. This number is not guaranteed
+#' @param type Methods to order tweets by
+#' @param include_rts Whether or not to include retweets.
+#' @importFrom rtweet search_tweets get_timeline
+pull_tweets <- function(q = "", user = "", location = "",
+                        n = 10, type = "Recent", include_rts = TRUE) {
+  #input cleaning
+  type <- tolower(type)
+  include_rts <- ifelse(include_rts == "Yes", TRUE, FALSE)
+
+  # Invalid inputs errors
+  if(q == "" && user == "" && location == "") {
+    stop("You provided no search parameter!")
+  }
+  else if(q != "" && user != "") {
+    stop("You should only provide one of Search text or User!")
+  }
+  else if(user != "" && location != "") {
+    stop("You can't use both User and Location!")
+  }
+  # actual tweet pulls
+  else if(user != "") {
+    tweets <- get_timeline(
+      user = user,
+      n = n
+    )
+  }
+  else if (location != ""){
+    tweets <- search_tweets(
+      q = q,
+      n = n,
+      type = type,
+      include_rts = include_rts,
+      geocode = lookup_coords_nominatim(location)
+    )
+  }
+  else {
+    tweets <- search_tweets(
+      q = q,
+      n = n,
+      type = type,
+      include_rts = include_rts
+    )
+  }
+
+  tweets
+}
+
+#' Generate DT-friendly format tweets
+#'
+#' Process tweets pulled by the user, so that it looks nice on DT.
+#'
+#' The resulting dataframe contains four columns
+#' \itemize{
+#'   \item{Picture:} {User picture, with an anchor tag, leading to user profile}
+#'   \item{User:} {User name}
+#'   \item{Date:} {Date/time in UTC}
+#'   \item{Text:} {Text from tweet, wrapped in anchor tag, leading to the tweet}
+#' }
+#'
+#' @param tweets A data.frame containing tweets.
+#' @importFrom dplyr transmute mutate
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
+pretty_tweets <- function(tweets) {
+
+  if(nrow(tweets) == 0) {
+    stop("No tweets found!")
+  }
+
+  user_name <- attr(tweets, "users")$name
+  screen_name <- attr(tweets, "users")$screen_name
+  profile_image <- attr(tweets, "users")$profile_image_url_https
+
+  processed <- tweets %>%
+    mutate(
+      user_name = user_name,
+      screen_name = screen_name,
+      profile_image = profile_image,
+      user_url = paste0("https://twitter.com/", .data$screen_name),
+      tweet_url = paste0(.data$user_url, "/status/", .data$id_str)
+    ) %>%
+    transmute(
+      profile_image = sprintf('<a href="%s" target=_blank><img class="profile-table-img" src=%s></img></a>',
+                              .data$user_url,
+                              .data$profile_image),
+      screen_name = paste0("@", .data$screen_name),
+
+      # format date-time
+      created_at = paste(
+        as.character(strptime(gsub("\\+0000\\s", "", .data$created_at),
+                              format = "%a %b %d %H:%M:%S %Y")),
+        "UTC"),
+      id = sprintf('<a href="%s">%s</a>',
+                   .data$tweet_url,
+                   .data$id),
+      text = .data$text
+
+    )
+
+  names(processed) <- c("Picture", "User", "Date", "ID", "Text")
+
+  processed
+
 }

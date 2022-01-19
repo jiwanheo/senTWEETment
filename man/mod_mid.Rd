@@ -7,15 +7,24 @@
 \usage{
 mod_mid_ui(id)
 
-mod_mid_server(id)
+mod_mid_server(id, ta)
 }
 \arguments{
 \item{id}{The Module namespace}
+
+\item{ta}{TweetAnalysis object, to hold analysis process in R6.}
 }
 \description{
-A shiny Module that contains the second step of the app,
-namely the various methods to analyze the tweets. Users can either analyze
-every word (unigram), or pairs of words (N-gram), using several different
-dictionaries. If one option is selected, the other should be NULL. Once
-the method has been determined, the "Analyze!" button executes the analysis.
+A shiny Module that contains the second step of the app, namely the 3
+customizable aspects of the sentiment analysis, broken up into their own
+module. After customization, users can initiate the analysis, which will be
+saved in ta R6 object. Finally, it triggers the "analyze-tweets" trigger.
+}
+\details{
+Child Modules
+\itemize{
+\item{mod_mid_lexicons:} {Choose sentiment lexicons}
+\item{mod_mid_negation_words:} {Carries out bigram negation adjustment}
+\item{mod_mid_stop_words:} {Add/remove stop words}
+}
 }

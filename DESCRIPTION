@@ -2,22 +2,36 @@ Package: senTWEETment
 Title: Analyze Twitter Sentiment
 Version: 0.0.0.9000
 Authors@R: person('Jiwan', 'Heo', email = 'jiwanheo123@gmail.com', role = c('cre', 'aut'))
-Description: A Shiny app to pull in and conduct text sentiment analysis on tweets, using Twitter Developer API. Users of this app can easily customize the analysis, without coding.
+Description: A Shiny app to conduct lexicon-based text sentiment analysis on tweets written in English.
 License: MIT + file LICENSE
 Imports: 
     config (>= 0.3.1),
+    dplyr,
+    DT,
+    forcats,
     ggplot2,
-    golem (>= 0.3.1.9003),
+    golem,
+    jsonlite,
+    magrittr,
+    purrr,
+    R6,
+    readr,
+    rlang,
     rtweet,
-    shinipsum,
     shiny (>= 1.7.1),
     shinyalert,
     shinydashboard,
     shinyjs,
-    shinyWidgets
+    shinyWidgets,
+    textdata,
+    tibble,
+    tidyr,
+    tidytext,
+    waiter
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2.9000
 Suggests: 
     rmarkdown,
     knitr,
@@ -27,3 +41,6 @@ Language: en-US
 URL: https://github.com/jiwanheo/senTWEETment
 BugReports: https://github.com/jiwanheo/senTWEETment/issues
 VignetteBuilder: knitr
+Depends: 
+    R (>= 2.10)
+Remotes: ropensci/rtweet
