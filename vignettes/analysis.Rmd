@@ -14,137 +14,155 @@ knitr::opts_chunk$set(
 )
 ```
 
-Let's just do all 3 lexicons, and present all the different outputs
+## Inputs
 
-- Overall Sentiment per tweet & dataset (3 lex)
-- Word breakdown from the whole dataset (sentiment score bar chart)
+![](analysis-input.PNG){width="548"}
 
-With the features of:
+### Lexicons
 
-- Custom stop words
-- N-gram adjustment
-  - Custom Negation words
+senTWEETment uses the unigram lexicon-based sentiment analysis, targeted at tweets in the English language.
 
-Note: 
+Firstly, you'll need to choose the sentiment lexicons to work with. There are 3 pre-set libraries from [{textdata}](https://github.com/EmilHvitfeldt/textdata), as well as an option to upload your own csv file, which should have as column names, "word" & "value". (Note that the radiobutton should be on "Upload my own").
 
-lexicon libraries don't need to be called every time analyzing. `get_sentiments("bing")` Maybe load this once (at page load? at first click of analyze?) and save it somewhere, so I can see if it exists.
+- **AFINN**: not processed.
+- **bing**: "negative" / "positive" sentiments assigned -1 / 1 as values.
+- **nrc**: filtered on "negative" / "positive" sentiments, and assigned -1 / 1 as values.
 
-## Example
+### Negation Adjustment & Stop Words
 
-### Setup
+Here, you can see and edit the list of words used for negation adjustments and stop words removal. No action is required, if you're happy with the defaults and you want to do the negation adjustment.
+
+- **Negation words**: Words that can reverse the sentiment of the following word. ("Not bad", "Never funny")
+- **Stop words**: Words without real meaning, that are used to construct sentences. ("to", "a", "of")
+
+We'll see what these words do in the [Analysis process](#analysis-process) section.
+
+## Analysis process
+
+The entire process is heavily inspired by [Tidy Text Mining with R](https://www.tidytextmining.com/index.html).  Let's use a sample tweet to illustrate the process.
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+sample_tweet <- data.frame(
+  Text = "Not that much damage from yesterday's disaster"
+)
+```
+
 ```{r}
-# library(dplyr)
+sample_tweet
+```
+
+Firstly, the tweets are tokenized into unigrams
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 library(magrittr)
-# library(tidytext)
-# library(tidyr)
-
-afinn <- tidytext::get_sentiments("afinn")
-
-bing <- tidytext::get_sentiments("bing") %>% 
-  dplyr::transmute(word,
-                   value = ifelse(sentiment == "positive", 1, -1))
-
-nrc <- tidytext::get_sentiments("nrc") %>% 
-  dplyr::filter(sentiment %in% c("negative", "positive")) %>% 
-  dplyr::transmute(word, 
-                   value = ifelse(sentiment == "positive", 1, -1))
-
-rtweet::auth_as("my-twitter-app")
-tweets <- rtweet::search_tweets(q = "@fordnation") %>% 
-  dplyr::select(id_str, text) %>% 
-  tibble::as_tibble()
-
-# CUSTOM STOP WORDS
-
-custom_stop_words <- dplyr::bind_rows(tibble::tibble(word = c("miss"),  
-                                      lexicon = c("custom")), 
-                               tidytext::stop_words)
-
-sentimented <- tweets %>% 
-  tidytext::unnest_tokens(word, text, token = "tweets") %>% 
-  dplyr::filter(!word %in% custom_stop_words$word,
-                !word %in% gsub("'", "", custom_stop_words$word),
-                !grepl("^\\@|http", word),
-                grepl("[a-z]", word)) %>% 
-  dplyr::inner_join(nrc, by = "word")
+tokenized <- sample_tweet %>% 
+  tidytext::unnest_tokens(word, Text, token = "tweets")
 ```
 
-### Unigram outputs
+```{r}
+tokenized
+```
+
+Secondly, stop words are removed.
+
+```{r echo = FALSE}
+stop_words <- tidytext::stop_words
+
+tokenized_stopped <- tokenized  %>%
+  dplyr::filter(!word %in% stop_words$word,
+                !word %in% gsub("'", "", stop_words$word),
+                grepl("[a-z]", word))
+```
 
 ```{r}
-sentimented_sum <- sentimented %>% 
-  dplyr::group_by(id_str) %>% 
-  dplyr::summarize(value = sum(value), .groups = "drop")
+tokenized_stopped
+```
 
-# Sentiment per tweet
-tweets %>% 
-  dplyr::left_join(sentimented_sum, by = "id_str") %>% 
-  dplyr::mutate(value = ifelse(is.na(value), 0, value)) %>% 
-  dplyr::arrange(value) %>% 
-  head()
+This is then inner joined with the lexicon
 
-# Sentiment per tweet
-tweets %>% 
-  dplyr::left_join(sentimented_sum, by = "id_str") %>% 
-  dplyr::mutate(value = ifelse(is.na(value), 0, value)) %>% 
-  dplyr::summarize(value = sum(value))
+```{r echo = FALSE}
+lexicons <- textdata::lexicon_afinn()
 
-# word breakdown
+sentimented <- tokenized_stopped %>%
+  dplyr::inner_join(lexicons, by = "word")
+```
+
+```{r}
+sentimented
+```
+
+Now we stop for a second, and decide whether to carry out negation adjustment or not. 
+
+If we don't do it, the analysis ends here. The scores can be tallied up, to determine the sentiment of tweets.
+
+```{r}
 sentimented %>% 
-  dplyr::group_by(word) %>% 
-  dplyr::summarize(value = sum(value)) %>% 
-  dplyr::slice_max(abs(value), n = 20) %>% 
-  dplyr::mutate(word = forcats::fct_reorder(word, value)) %>% 
-  dplyr::mutate(is_positive = value > 0) %>% 
-  ggplot2::ggplot(ggplot2::aes(value, word, fill = is_positive)) +
-  ggplot2::geom_col()
+  dplyr::summarize(value = sum(value))
 ```
 
-### Bigram adjustment
+If we decide to do it, we leave `sentimented` here for now, and come back to it later.
 
-- "I am not happy" will give positive 3 score.
+### Negation Adjustment.
 
-How do I reverse this? break down the bigram score, create two rows (1 with original, 1 with negated). Both have `original score * -1` score. rbind this to original score.
+The purpose of this adjustment is to better capture the sentiments of texts by using bigrams. From the above text:
+
+> Not that much damage from yesterday's disaster
+
+Firstly, we turn this into a sequence of unigrams, and filter out the stop words.
+
+> "Not" "damage" "yesterday's" "disaster"
+
+Secondly, we move our way through the sentence, to make 2-word sequences.
+
+> "Not damage" "damage yesterday's" "yesterday's disaster"
+
+Then, we look to see if any of the new sequence starts with a negation word, and drop the rest.
+
+> "Not damage"
+
+From here, we look up the sentiment of the second word, "damage" in the lexicon. If found, reverse the sentiment value, and add it back to the original sentiment.
+
+We do this by creating a tibble below,
 
 ```{r}
-my_unigram <- tweets %>% 
-  tidytext::unnest_tokens(word, text, token = "tweets")
-
-unigram_score <- my_unigram %>% 
-  dplyr::inner_join(afinn, by = "word")
-
-unigram_score %>% 
-  dplyr::summarise(sum(value))
-
-my_bigram <- tweets %>%
-  tidytext::unnest_tokens(bigram, text, token = "ngrams", n = 2)
-
-bigrams_separated <- my_bigram %>%
-  tidyr::separate(bigram, c("word1", "word2"), sep = " ")
+negation_result <- tibble::tibble(
+  word = c("Not damage", "damage"),
+  value = c(3, 3)
+)
 ```
 
-### Custom negation words
+appending it to the original sentiment,
 
 ```{r}
-negation_words <- c("not", "no", "never", "without", "didn't", "didnt", "dont", "don't", "doesn't", "doesnt")
-
-negated_words <- bigrams_separated %>%
-  dplyr::filter(word1 %in% negation_words) %>%
-  dplyr::inner_join(afinn, by = c(word2 = "word")) %>% 
-  dplyr::mutate(word1 = paste(word1, word2)) %>% 
-  purrr::pmap_dfr(function(id_str, word1, word2, value){
-    tibble::tibble(id_str = id_str, 
-                   word = c(word1, word2), 
-                   value = c(-value, -value))
-  })
+sentimented %>% 
+  rbind(negation_result)
 ```
 
-### Adjustment
+and summing up at the word level.
 
 ```{r}
-unigram_score %>% 
-  rbind(negated_words) %>% 
+sentimented %>% 
+  rbind(negation_result) %>% 
   dplyr::group_by(word) %>% 
   dplyr::summarize(value = sum(value), .groups = "drop")
 ```
 
+This adjustment turns what was originally a negative tweet, to a positive one!
+
+The rest of this app, is just a couple different fun ways to visualize the analysis outlined here.
+
+## Developer's notes
+
+The negation adjustment often clashes with stop words. One problem is that most negation words are already found in stop words. This is solved by removing those negation words from the list of stop words. 
+
+Another critical flaw is that it can result in negating something undesirable. Take this sentence.
+
+> I'm not saying that improving sleep is a must, but it'd be nice.
+
+This sentence has generally a positive tone, because the word 'not' doesn't really mean much here. It is just used as a casual setup to the real meaning behind the sentence, "It'd be nice to improve sleep". However, our lexicon-based negation adjustment turns this into:
+
+> "not improving" "nice"
+
+... and evaluate them separately. (-2 + 3 = 1 on AFINN)
+
+So, yes. There exist some shortcomings of mostly unigram lexicon-based approach of senTWEETment. I still think this basic level analysis offers something useful.
