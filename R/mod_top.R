@@ -92,7 +92,7 @@ mod_top_ui <- function(id){
           DTOutput(ns("table"))
         )
       )
-    )
+    ) %>% tagAppendAttributes(class = "main-step")
   )
 }
 

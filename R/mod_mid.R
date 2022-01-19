@@ -13,7 +13,7 @@
 #' }
 #' @param id The Module namespace
 #' @rdname mod_mid
-#' @importFrom shiny NS HTML tagList
+#' @importFrom shiny NS HTML tagList tagAppendAttributes
 #' @importFrom shinydashboard box
 mod_mid_ui <- function(id){
   ns <- NS(id)
@@ -34,7 +34,7 @@ mod_mid_ui <- function(id){
         class = "text-center",
         actionButton(ns("analyze"),"Analyze!")
       )
-    )
+    ) %>% tagAppendAttributes(class = "main-step")
   )
 }
 
