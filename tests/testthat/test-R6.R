@@ -28,7 +28,7 @@ test_that("R6 works", {
   expect_true(!"random_word" %in% ta$stop_words$word)
 
   # Lexicon adding works
-  ta$lexicons <- process_lexicons()$afinn
+  ta$lexicons <- data.frame(word = "bad", value = -3)
   expect_true(!is.null(ta$lexicons))
 
   # analyze fails without tweets

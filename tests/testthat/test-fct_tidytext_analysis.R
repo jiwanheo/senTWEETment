@@ -8,7 +8,7 @@ test_that("conduct_analysis works", {
     ID = '<a href=\"https://twitter.com/jiwanheo/status/1481810657817374720\">1481810657817374720</a>',
     Text = 'Testing not that bad sentiment analysis. @dontshowup https://thisshouldntshow #thisshouldshow'
   )
-  lexicons <- get_lexicons(retrieve = TRUE)$afinn
+  lexicons <- data.frame(word = "bad", value = -3)
   stop_words <- stop_words
   negation_words <- c("no", "not")
 
