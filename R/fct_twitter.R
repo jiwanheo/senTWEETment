@@ -3,22 +3,25 @@
 #' Connect to Twitter API using the credentials provided.
 #'
 #' @param bearer_token User specific bearer token
-#' @param saved If TRUE, use the existing 'my-twitter-app' authentication. If
-#' FALSE, make one, and authenticate with it.
+#' @param save Boolean to indicate whether to save the authentication or not,
+#' on initial setup. Default to TRUE.
 #' @importFrom rtweet rtweet_app auth_save auth_as
 #' @importFrom shinyalert shinyalert
-connect_to_api <- function(bearer_token, saved = TRUE) {
+connect_to_api <- function(bearer_token, save = TRUE) {
+
   # throw an error if no creds are provided
   stopifnot(!is.null(bearer_token))
   stopifnot(bearer_token != "")
 
-  if(saved) {
+  if(bearer_token == "my-twitter-app") {
     auth_as("my-twitter-app")
   }
   else {
     auth <- rtweet_app(bearer_token)
-    auth_save(auth, "my-twitter-app")
-    auth_as("my-twitter-app")
+    auth_as(auth)
+    if(save) {
+      auth_save(auth, "my-twitter-app")
+    }
   }
 }
 

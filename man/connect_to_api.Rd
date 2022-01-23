@@ -4,13 +4,13 @@
 \alias{connect_to_api}
 \title{Connect to Twitter API}
 \usage{
-connect_to_api(bearer_token, saved = TRUE)
+connect_to_api(bearer_token, save = TRUE)
 }
 \arguments{
 \item{bearer_token}{User specific bearer token}
 
-\item{saved}{If TRUE, use the existing 'my-twitter-app' authentication. If
-FALSE, make one, and authenticate with it.}
+\item{save}{Boolean to indicate whether to save the authentication or not,
+on initial setup. Default to TRUE.}
 }
 \description{
 Connect to Twitter API using the credentials provided.

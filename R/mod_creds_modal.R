@@ -29,7 +29,7 @@ mod_creds_modal_server <- function(id){
 
     observeEvent(input$shinyalert_input1, {
       tryCatch({
-        connect_to_api(input$bearer_token, saved = FALSE)
+        connect_to_api(input$bearer_token)
         shinyalert("Connected!", "Start analyzing tweets!", type = "success", inputId = "shinyalert_connected_1")
       },
       error = function(e) {

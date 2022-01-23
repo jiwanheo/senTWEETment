@@ -1,11 +1,6 @@
 # Commenting out for now, GH Actions doesn't like it. I need a way to
 # Mimic the authentication process.
 
-# test_that("connect_to_api fails, when no value given", {
-#   expect_error(connect_to_api(bearer_token = NULL))
-#   expect_error(connect_to_api(bearer_token = ""))
-# })
-#
 # test_that("pull_tweets regular+location query returns tweets data", {
 #   connect_to_api("my-twitter-app")
 #
