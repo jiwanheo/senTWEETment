@@ -1,5 +1,3 @@
-context("API Authentication")
-
 test_that("connect_to_api fails, when no value given", {
   expect_error(connect_to_api(bearer_token = NULL))
   expect_error(connect_to_api(bearer_token = ""))

@@ -12,45 +12,36 @@ test_that("conduct_analysis works", {
   stop_words <- stop_words
   negation_words <- c("no", "not")
 
-  dfs <- conduct_analysis(tweets,
-                          lexicons,
-                          stop_words,
-                          negation_words,
-                          adjust_negation = "no")
+  suppressMessages(
+    dfs <- conduct_analysis(tweets,
+                            lexicons,
+                            stop_words,
+                            negation_words,
+                            adjust_negation = "no")
+  )
 
   # return type is correct
   expect_true(is.list(dfs))
+  expect_true(identical(names(dfs), c("tweets", "sentimented")))
   expect_true(is.data.frame(dfs$tweets))
   expect_true(is.data.frame(dfs$sentimented))
 
   # The first df of conduct_analysis returns the same length row.
   expect_true(nrow(dfs$tweets) == nrow(tweets))
 
-  # Regular Sentiment analysis per AFINN worked.
+  # Regular Sentiment analysis worked.
   expect_equal(dfs$sentimented$word[[1]], "bad")
   expect_equal(dfs$sentimented$value[[1]], -3)
 
   # Negation adjustment worked.
-  dfs <- conduct_analysis(tweets,
-                          lexicons,
-                          stop_words,
-                          negation_words,
-                          adjust_negation = "yes")
+  suppressMessages(
+    dfs <- conduct_analysis(tweets,
+                            lexicons,
+                            stop_words,
+                            negation_words,
+                            adjust_negation = "yes")
+  )
 
   expect_equal(dfs$sentimented$word[[1]], "not bad")
   expect_equal(dfs$sentimented$value[[1]], 3)
-
-  # produce_analysis_output works
-
-  outputs <- produce_analysis_output(dfs)
-
-  expect_true(nrow(dfs$tweets) == nrow(outputs$sentiment_by_tweet))
-  expect_true(nrow(dfs$tweets) == nrow(outputs$all_tweets_scored))
-  expect_true(nrow(dfs$tweets) <= nrow(outputs$all_words_scored))
-
-  expect_equal(outputs$overall_scores$sentiment_n, 1)
-  expect_equal(outputs$overall_scores$sentiment_sum, 3)
-  expect_equal(outputs$overall_scores$sentiment_avg, 3)
-
-  expect_s3_class(outputs$word_plot, "ggplot")
 })

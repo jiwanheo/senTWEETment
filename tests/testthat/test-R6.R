@@ -1,4 +1,4 @@
-test_that("R6 works", {
+test_that("R6 works Initialization", {
   # Creation without stop_words fails
   expect_error(TweetAnalysis$new())
 
@@ -12,8 +12,11 @@ test_that("R6 works", {
   expect_true(is.data.frame(ta$stop_words))
   expect_true(is.character(ta$negation_words))
   expect_null(ta$analysis_result)
+})
 
-  # Word adding/removing works
+test_that("Word adding/removing works", {
+
+  ta <- TweetAnalysis$new(stop_words = stop_words)
 
   ta$add_negation_word("random_word")
   expect_true("random_word" %in% ta$negation_words)
@@ -30,11 +33,20 @@ test_that("R6 works", {
   # Lexicon adding works
   ta$lexicons <- data.frame(word = "bad", value = -3)
   expect_true(!is.null(ta$lexicons))
+  expect_equal(nrow(ta$lexicons), 1)
+  expect_equal(ta$lexicons[ta$lexicons$word == "bad", "value"], -3)
+
+})
+
+test_that("analyze method works", {
+
+  ta <- TweetAnalysis$new(stop_words = stop_words)
+  ta$lexicons <- data.frame(word = "bad", value = -3)
 
   # analyze fails without tweets
   expect_error(ta$analyze())
 
-  # analyze works
+  # Sample Tweet
   tweets <- data.frame(
     Picture = '<a href=\"https://twitter.com/jiwanheo\" target=_blank><img class=\"profile-table-img\" src=https://pbs.twimg.com/profile_images/1387996217959985156/1N4AcdFH_normal.jpg></img></a>',
     User = '@jiwanheo',
@@ -45,7 +57,9 @@ test_that("R6 works", {
   ta$data <- tweets
   expect_true(!is.null(ta$data))
 
-  analysis_output <- ta$analyze()
+  suppressMessages(
+    analysis_output <- ta$analyze()
+  )
 
   expect_true(identical(
     names(analysis_output),
@@ -54,5 +68,6 @@ test_that("R6 works", {
       "all_tweets_scored",
       "overall_scores",
       "word_plot")
-    ))
+  ))
+
 })
