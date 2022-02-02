@@ -1,0 +1,32 @@
+{
+  "input": {
+    "main_1-mid_1-analyze": 1,
+    "main_1-mid_1-mid_lexicons_1-file_upload": null,
+    "main_1-mid_1-mid_lexicons_1-lexicon": "Bing",
+    "main_1-mid_1-mid_negation_words_1-add_negation_word": 1,
+    "main_1-mid_1-mid_negation_words_1-adjust_negation": "Yes",
+    "main_1-mid_1-mid_negation_words_1-negation_word": "",
+    "main_1-mid_1-mid_negation_words_1-remove_negation_word": 0,
+    "main_1-mid_1-mid_negation_words_1-see_negation_words": 0,
+    "main_1-mid_1-mid_stop_words_1-add_stop_word": 1,
+    "main_1-mid_1-mid_stop_words_1-remove_stop_word": 0,
+    "main_1-mid_1-mid_stop_words_1-see_stop_words": 0,
+    "main_1-mid_1-mid_stop_words_1-stop_word": "",
+    "main_1-top_1-include_rts": "Yes",
+    "main_1-top_1-location": "",
+    "main_1-top_1-n_tweets": 15,
+    "main_1-top_1-pull_by": "Mixed",
+    "main_1-top_1-pull_tweets": 1,
+    "main_1-top_1-q": "#Rstats",
+    "main_1-top_1-user": ""
+  },
+  "output": {
+    "main_1-img": {
+      "src": "[image data sha1: 12f28dbd48717b4e60132a0ed4381b1d318c3450]",
+      "height": "200px"
+    }
+  },
+  "export": {
+
+  }
+}

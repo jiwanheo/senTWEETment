@@ -1,0 +1,17 @@
+test_that("App Server Testing", {
+  app <- shinytest::ShinyDriver$new("../../")
+  app$snapshotInit("server-test")
+
+  app$setInputs(`main_1-top_1-q` = "#Rstats")
+  app$setInputs(`main_1-top_1-n_tweets` = 15)
+  app$setInputs(`main_1-top_1-include_rts` = "Yes")
+  app$setInputs(`main_1-top_1-pull_by` = "Mixed")
+  app$setInputs(`main_1-top_1-pull_tweets` = "click")
+  app$setInputs(`main_1-mid_1-mid_lexicons_1-lexicon` = "Bing")
+  app$setInputs(`main_1-mid_1-mid_negation_words_1-negation_word` = "seldom")
+  app$setInputs(`main_1-mid_1-mid_negation_words_1-add_negation_word` = "click")
+  app$setInputs(`main_1-mid_1-mid_stop_words_1-stop_word` = "de")
+  app$setInputs(`main_1-mid_1-mid_stop_words_1-add_stop_word` = "click")
+  app$setInputs(`main_1-mid_1-analyze` = "click")
+  app$snapshot()
+})
